@@ -1,0 +1,2 @@
+./usun.sh
+ls -lh

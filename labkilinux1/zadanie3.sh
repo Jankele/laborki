@@ -1,0 +1,2 @@
+pwd > ~/lokalizacja
+cat lokalizacja
