@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
-
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 typedef struct node
 {
     int dane;
@@ -10,29 +10,42 @@ typedef struct node
 //funkcja dodajaca element na koniec listy
 void pushl(node **node, int a)
 {
-    struct node *tmp = malloc(sizeof(node));//wskazniki pomocnicze
+    //wskaznik pomocniczny
+    struct node *tmp = malloc(sizeof(node));
     tmp->wezel = NULL;
     tmp->dane = a;
+    //przypisanie glowy listy do tymczasowego wskaznika
     struct node *pom = *node;
+    //jesli glowa jest pusta przypisz do niej nowy element
     if(*node == NULL)
     {
         *node = tmp;
     }
     else
     {
-        while(pom->wezel)//tmp przechodzi na koniec listy
+        //przejdz do ostatniego elementu
+        while(pom->wezel)
         pom = pom->wezel;
+        //ostatni element wskazuje na nowy element
         pom->wezel = tmp;
-        tmp=NULL;
     }
 }
-
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//funkcja dodajaca element na poczatek listy
 void pushf(node **node, int a)
 {
+    /*funkcja dziala identycznie do ww.
+      jednak bez przejscia na ostatni element
+      zamiast tego wskaznik pomocniczy zaczyna wskazywac na glowe
+      i potem glowa przypisywana jest do wskaznika pomocniczego co czyni z niej nowy start listy*/
     struct node *tmp = malloc(sizeof(node));
     tmp->wezel = NULL;
     tmp->dane = a;
-    if(*node != NULL)
+    if(*node == NULL)
+    {
+        *node = tmp;
+    }
+    else
     {
         tmp->wezel = *node;
         *node = tmp;
@@ -51,7 +64,7 @@ void popl(node **node)
         tmp = tmp->wezel;
     }
     free(tmp);//uwalniamy ostatni element
-    pom->wezel = NULL;//uwalniamy wskaznik na ostatni, nieistniejacy juz element
+    pom->wezel = NULL;//kasujemy wskaznik na ostatni, nieistniejacy juz element
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //funkcja usuwajaca pierwszy element z listy
@@ -69,28 +82,31 @@ void popf(node **node)
         exit(0);
     }
 }
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //funkcja wyswietlajaca cala liste
 int wyswietl(node *node)
 {
-    if(node == NULL)
+    //jesli lista nie ma elementow wypisz komunikat i wyjdz z funkcji, w innym wypadku wypisz element a nastepnie ustaw sie na nastepnym
+    if(node != NULL)
     {
-    printf("Lista jest pusta\n");
-    return 0;
+        while(node)
+        {
+            printf("%d\n", node->dane);
+            node = node->wezel;
+        }
     }
     else
     {
-    while(node)
-    {
-        printf("%d\n", node->dane);
-        node = node->wezel;
-    }
+        printf("lista jest pusta");
     }
     printf("\n");
     return 0;
 }
-
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//funkcja czyszczaca cala liste
 void flush(node **node)
 {
+    //jesli istnieje element listy, wskaz na niego wskaznikiem pomocniczym, ustaw glowe na nastepny element i zwolnij stara glowe
     while(*node)
     {
         struct node *tmp = *node;
@@ -98,7 +114,7 @@ void flush(node **node)
         free(tmp);
     }
 }
-
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 int main()
 {
     struct node *head = NULL;
