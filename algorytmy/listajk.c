@@ -16,20 +16,21 @@ int main ()
 	head->n=NULL; //stworzenie poczatku listy jako jedynej pozycji listy
 	head->d=0 ; //przypisanie pierwszemu elementowi wartosci 0
 	next = head;
-//////////////DODAWANIE///////////////////////////	
+//////////////DODAWANIE///////////////////////////
 	if(next == NULL)
 	{
 		printf("out of memory");
 		return 0;
 	}
-	for(int i=1;i<5;i++) 
+	for(int i=1;i<5;i++)
 	{
-		next = next->n = malloc(sizeof(node));
-		next->n=NULL;
+        next->n = malloc(sizeof(node));
+        next = next->n;
+        next->n=NULL;
 		next->d=i;
 	}
-	
-///////////WYSWIETLANIE PRZEZ ITERACJE///////////	
+
+///////////WYSWIETLANIE PRZEZ ITERACJE///////////
 	next = head;
 	while ( next != NULL )
 	{
