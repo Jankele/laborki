@@ -1,0 +1,20 @@
+#IncludeRegexLine: ^[ 	]*#[ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/user/laborki/cpp/file.cpp
+iostream
+-
+
+/home/user/laborki/cpp/file.hpp
+
+/home/user/laborki/cpp/main.cpp
+cstdlib
+-
+file.hpp
+/home/user/laborki/cpp/file.hpp
+
