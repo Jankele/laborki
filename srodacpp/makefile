@@ -1,3 +1,8 @@
+all: 1.out 2.out 3.out 4.out 5.out 6.out 7.out
+1.out: zadanie1.cpp
+	g++ zadanie1.cpp -o 1.out
+2.out: zadanie2.cpp
+	g++ zadanie2.cpp -o 2.out
 3.out: zadanie3.cpp
 	g++ zadanie3.cpp -o 3.out
 4.out: zadanie4.cpp
