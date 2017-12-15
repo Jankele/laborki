@@ -7,15 +7,20 @@ pthread_cond_t pingc, pongc;
 int jesli = 0, stop = 0;
 void *pingf()
 {
+//petla wykonuje sie 20 razy
 	while(stop<20)
-	{			
+	{
+//blokujemy wykonywanie mutexem			
 		pthread_mutex_lock( &mutex );
+//sprawdzamy czy drugi watek wykonal juz swoja prace
 			if(jesli == 1)
 				pthread_cond_wait(&pingc, &mutex);
+//wypisujemy "ping" inkrementujemy petle while oraz usypiamy wykonanie watku na 0,25 sekundy w celu lepszego zobrazowania synchronizacji watkow.
 			printf("ping\n");
 			jesli = 1;
 			stop++;
 			usleep(250000);
+//sygnalizujemy drugi watek o koncu swojej pracy
 			pthread_cond_signal(&pongc);
 		pthread_mutex_unlock( &mutex );
 	}
@@ -24,15 +29,20 @@ void *pingf()
 
 void *pongf()
 {
+//petla wykonuje sie 20 razy
 	while(stop<20)
 	{
+//blokujemy wykonywanie mutexem	
 		pthread_mutex_lock( &mutex );
+//sprawdzamy czy pierwszy watek wykonal juz swoja prace
 		if(jesli == 0)
 			pthread_cond_wait(&pongc, &mutex);
+//wypisujemy "ping" inkrementujemy petle while oraz usypiamy wykonanie watku na 0,25 sekundy w celu lepszego zobrazowania synchronizacji watkow.
 		printf("pong\n");
 		jesli = 0;
 		stop++;
 		usleep(250000);
+//sygnalizujemy pierwszy watek o koncu swojej pracy
 		pthread_cond_signal(&pingc);
 		pthread_mutex_unlock( &mutex );
 	}
@@ -54,7 +64,7 @@ int main()
 //zatrzymanie watkow
 	pthread_join( ping, NULL );
 	pthread_join( pong, NULL );
-//terminacja mutexu oraz zmiennych warunkowych
+//niszczenie mutexu oraz zmiennych warunkowych
 	pthread_mutex_destroy(&mutex);
 	pthread_cond_destroy(&pingc);
 	pthread_cond_destroy(&pongc);
