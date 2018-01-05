@@ -1,7 +1,15 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <unistd.h>
+#include <pthread.h>
 
 #define MAX_ELEMS 10
+#define N 5
+
+int iterator=1;
+pthread_t th[N];
+pthread_mutex_t muteks;
+pthread_cond_t cond;
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 typedef struct List
 {
@@ -13,7 +21,6 @@ typedef struct List
 int push_back(List **node, int a)
 {
     //wskaznik pomocniczny
-    int i = 1;
     struct List *tmp = malloc(sizeof(node));
     tmp->next = NULL;
     tmp->value = a;
@@ -29,10 +36,13 @@ int push_back(List **node, int a)
     	while(pom->next)
         {
         	pom = pom->next;
-        	i++;
+        	iterator++;
     	}
-        if(i<=MAX_ELEMS)
-    		pom->next = tmp;
+        if(iterator<=MAX_ELEMS)
+        {
+            pom->next = tmp;
+            iterator = 1;
+        }
         else
         	return -1;
     }
@@ -47,7 +57,7 @@ int pop_front(List **node)
         struct List *tmp = *node;
         *node = (*node)->next;
         free(tmp);
-        printf("pop\n");
+        iterator--;
     }
     else
     {
@@ -91,7 +101,7 @@ void flush(List **node)
 int main()
 {
     struct List *head = NULL;
-    for(int i=1;i<MAX_ELEMS;i++)
+    for(int i=1;i<=MAX_ELEMS;i++)
         push_back(&head, i);
     printf("Lista po wypelnieniu: \n");
     wyswietl(head);
