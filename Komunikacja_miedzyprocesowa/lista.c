@@ -6,112 +6,159 @@
 #define MAX_ELEMS 10
 #define N 5
 
-int iterator=1;
-pthread_t th[N];
-pthread_mutex_t muteks;
-pthread_cond_t cond;
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 typedef struct List
 {
     int value;
     struct List* next;
 }List;
+
+List *head = NULL;
+unsigned int iterator = 0;
+pthread_mutex_t muteks;
+pthread_cond_t cond;
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //funkcja dodajaca element na koniec listy
 int push_back(List **node, int a)
 {
-    //wskaznik pomocniczny
-    struct List *tmp = malloc(sizeof(node));
-    tmp->next = NULL;
-    tmp->value = a;
-    //przypisanie glowy listy do tymczasowego wskaznika
-    struct List *pom = *node;
-    //jesli glowa jest pusta przypisz do niej nowy element
-    if(*node == NULL)
-    {
-        *node = tmp;
-    }
-    else
-    {
-    	while(pom->next)
+    if(iterator <= MAX_ELEMS)
+   {
+        //wskaznik pomocniczny
+        struct List *tmp = malloc(sizeof(List));
+        tmp->next = NULL;
+        tmp->value = a;
+        //przypisanie glowy listy do tymczasowego wskaznika
+        struct List *pom = *node;
+        //jesli glowa jest pusta przypisz do niej nowy element
+        if(*node == NULL)
         {
-        	pom = pom->next;
-        	iterator++;
-    	}
-        if(iterator<=MAX_ELEMS)
-        {
-            pom->next = tmp;
-            iterator = 1;
+            *node = tmp;
+            iterator++;
         }
         else
-        	return -1;
-    }
+        {
+    	   while(pom->next)
+            {
+            	pom = pom->next;
+                iterator++;
+            }
+                pom->next = tmp;
+        }
+        return a;
+   }
+   else
+        return -1;
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //funkcja usuwajaca pierwszy element z listy
 int pop_front(List **node)
 {
-    if((*node)->next != NULL)
+    if((*node) == NULL)
     {
-        struct List *tmp = *node;
-        *node = (*node)->next;
-        free(tmp);
-        iterator--;
-    }
-    else
-    {
-        printf("lista jest pusta\n");
         return -1;
     }
-}
-////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//funkcja wyswietlajaca cala liste
-int wyswietl(List *node)
-{
-    //jesli lista nie ma elementow wypisz komunikat i wyjdz z funkcji, w innym wypadku wypisz element a nastepnie ustaw sie na nastepnym
-    if(node != NULL)
-    {
-        while(node)
-        {
-            printf("%d\n", node->value);
-            node = node->next;
-        }
-    }
     else
     {
-        printf("lista jest pusta");
-    }
-    printf("\n");
-    return 0;
-}
-////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//funkcja czyszczaca cala liste
-void flush(List **node)
-{
-    //jesli istnieje element listy, wskaz na niego wskaznikiem pomocniczym, ustaw glowe na nastepny element i zwolnij stara glowe
-    while(*node)
-    {
         struct List *tmp = *node;
+        int pop_value = tmp->value;
         *node = (*node)->next;
         free(tmp);
+        iterator = 0;
+        return pop_value;
     }
 }
+
+void *producent(void *arg)
+{
+    while(1)
+    {
+        int wartosc = rand()%30;
+        pthread_mutex_lock(&muteks); //poczatek sekcji krytycznej
+          int value = push_back(&head,wartosc);
+         if(value != -1)
+           {
+            printf("Watek %ld wrzucilem na liste element: %d\n", pthread_self(), value);
+            pthread_cond_signal(&cond);
+          }
+          else
+              printf("Watek %ld: lista jest przepełniona\n", pthread_self());
+        pthread_mutex_unlock(&muteks); //koniec sekcji krytycznej
+        sleep(1);
+    }
+    pthread_exit(NULL);
+}
+
+void *konsument(void *arg)
+{
+    while(1)
+    {
+        pthread_mutex_lock(&muteks); //poczatek sekcji krytycznej
+            int value = pop_front(&head);
+            if(value != -1)
+            {
+                printf("Watek %ld: zdjalem z listy element: %d\n", pthread_self(), value);
+                pthread_cond_wait(&cond,&muteks);
+            }
+            else
+                printf("Watek %ld: lista pusta\n", pthread_self());
+
+        pthread_mutex_unlock(&muteks); //koniec sekcji krytycznej
+        usleep(500000);
+    }
+    pthread_exit(NULL);
+}
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 int main()
 {
-    struct List *head = NULL;
-    for(int i=1;i<=MAX_ELEMS;i++)
-        push_back(&head, i);
-    printf("Lista po wypelnieniu: \n");
-    wyswietl(head);
+    int n = N+2;
+    pthread_t producent_th[N];
+    pthread_t konsument_th[n];
 
-    pop_front(&head);
-    printf("Lista po usunieciu pierwszego elementu: \n");
-    wyswietl(head);
+    if(pthread_mutex_init(&muteks,0)!=0)
+    {
+        perror("Nie moge utworzyc mutexa");
+        exit(0);
+    }
+    if(pthread_cond_init(&cond,0)!=0)
+    {
+        perror("Nie moge utworzyc cond var");
+        exit(0);
+    }
 
-    flush(&head);
-    printf("Lista po jej wyczyszczeniu: \n");
-    wyswietl(head);
+    printf("START PRODUCENTOW\n");
+    for(unsigned int i=0;i<N;i++)
+    {
+        if(pthread_create(&producent_th[i],NULL,producent,NULL)==0)
+            printf("Stworzony producent %ld: ID =  %lu | Nowy watek: %ld\n", i, pthread_self(), producent_th[i]);
+        else
+        {
+            perror("Blad podczas tworzenia producenta.\n");
+            exit(0);
+        }
+    }
+
+    printf("START KONSUMENTOW\n");
+    for(unsigned int i=0;i<n;i++)
+    {
+        if(pthread_create(&konsument_th[i],NULL,konsument,NULL) == 0)
+            printf("Stworzony konsument %ld: ID =  %lu | Nowy watek: %ld\n", i, pthread_self(), konsument_th[i]);
+        else
+        {
+            perror("Blad podczas tworzenia klienta.\n");
+            exit(0);
+        }
+    }
+    for(unsigned int i=0;i<N;i++)
+        pthread_join(producent_th[i],NULL);
+    for(unsigned int i=0;i<n;i++)
+        pthread_join(konsument_th[i],NULL);
+    pthread_cond_destroy(&cond);
+    pthread_mutex_destroy(&muteks);
     return 0;
 }
