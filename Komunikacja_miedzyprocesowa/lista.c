@@ -86,9 +86,13 @@ void *producent(void *arg)
             pthread_cond_signal(&cond);
           }
           else
+          {
               printf("Watek %ld: lista jest przepełniona\n", pthread_self());
+              sleep(1);
+              pthread_cond_signal(&cond);
+          }
         pthread_mutex_unlock(&muteks); //koniec sekcji krytycznej
-        sleep(1);
+        sleep(2);
     }
     pthread_exit(NULL);
 }
@@ -105,10 +109,13 @@ void *konsument(void *arg)
                 pthread_cond_wait(&cond,&muteks);
             }
             else
+            {
                 printf("Watek %ld: lista pusta\n", pthread_self());
-
+                sleep(1);
+                pthread_cond_signal(&cond);
+            }
         pthread_mutex_unlock(&muteks); //koniec sekcji krytycznej
-        usleep(500000);
+        sleep(1);
     }
     pthread_exit(NULL);
 }
@@ -116,7 +123,7 @@ void *konsument(void *arg)
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 int main()
 {
-    int n = N+2;
+    int n = N-3;
     pthread_t producent_th[N];
     pthread_t konsument_th[n];
 
