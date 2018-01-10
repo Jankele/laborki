@@ -5,32 +5,36 @@
 
 #define N 10
 
-short int rozmiar_stosu = 0;
+int tablica[N] = {0};
+unsigned short iterator = 0;
 
-//funkcja dodajaca element na koniec listy
-int push_back(int *node, int a)
+int push_pop(int *node, int a)
 {
-    int pop_value = a;
-    if()
+    if(iterator > N || iterator < 1)
     {
-        return -1;
+        return(-1);
     }
     else
-        return pop_value;
+    {
+        node[iterator-1] = a;
+        iterator++;
+        return node[iterator-1];
+    }
 }
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//funkcja usuwajaca pierwszy element z listy
 int pop_front(int *node)
 {
     int pop_value;
-    if()
+    if(iterator < 1)
     {
         return -1;
     }
     else
     {
-      return pop_value;
+        pop_value = node[iterator - 1];
+        node[iterator-1] = 0;
+        iterator--;
+        return node[iterator-1];
     }
 }
 
@@ -44,7 +48,6 @@ void *konsument(void *arg)
 
 }
 
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 int main()
 {
 
