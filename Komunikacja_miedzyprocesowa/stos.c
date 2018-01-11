@@ -2,13 +2,13 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <semaphore.h>
+#include <sys/shm.h>
+#include <sys/ipc.h>
 
 #define N 10
 
-int stos[N] = {0};
 unsigned short iterator = 0;
-sem_t pelny;
-sem_t pusty;
+int *stos;
 
 void push_pop(int *node, int a)
 {
@@ -42,11 +42,28 @@ int pop_front(int *node)
 int main()
 {
 	pid_t pid;
-	size_t size = sizeof(stos);
+	int shmid, status;
+	sem_t pelny;
+	sem_t pusty;
 	
+	if ((shmid = shmget(IPC_PRIVATE, sizeof(int)*N, IPC_CREAT)) == -1)
+	{
+        perror("shmget error\n");
+        exit(EXIT_FAILURE);
+    }
+
+	stos = shmat(shmid, NULL);
+	
+	sem_init(&pusty,  1, 1);
+	sem_init(&pelny,  1, 0);
+
 	pid = fork();
 	if(pid == -1)
-		exit(EXIT_FAILURE);
+	{
+		perror("fork error\n");
+		exit(EXIT_FAILURE);		
+	}
+
 	else if(pid == 0) //dziecko - producent
 	{
 		while(1)
@@ -57,6 +74,7 @@ int main()
 		}
 		sem_close(pelny);
 		sem_close(pusty);
+		shmdt(&stos, NULL);
 		return 0;
 	}
 	else // rodzic - konsument
@@ -66,9 +84,11 @@ int main()
 			sem_wait(&pusty);
 			
 			sem_post(&pelny);
+			wait(&status);
 		}
 		sem_close(pelny);
 		sem_close(pusty);
+		shmdt(&stos, NULL);
 		return 0;
 	}
 }
