@@ -8,6 +8,8 @@
 #include <semaphore.h> // semaphore
 
 typedef struct person_t {
+	sem_t sem_full; 
+	sem_t sem_empty; // why do we need two semaphores ??? 
 	char  name[20];
 	char  surname[20];	
 	int   age;
@@ -15,10 +17,8 @@ typedef struct person_t {
 
 int main(int argc, char *argv[])
 {
-	person_t * shm_ptr  = NULL;
-	int        shm_fd    = shm_open("/my_shm", O_CREAT | O_EXCL | O_RDWR, 0600);
-	sem_t    * sem_full  = sem_open("/my_sem_full",  O_CREAT | O_EXCL | O_RDWR, 0600, 0); 
-	sem_t    * sem_empty = sem_open("/my_sem_empty", O_CREAT | O_EXCL | O_RDWR, 0600, 1); //writer gets first turn !!! 
+	person_t * shm_ptr = NULL;
+	int        shm_fd  = shm_open("/my_shm", O_CREAT | O_EXCL | O_RDWR, 0600);
 	int        pid;
 	int        status;
 	
@@ -32,15 +32,18 @@ int main(int argc, char *argv[])
 				  MAP_SHARED,             // update to the mapping is visible to other processes
 				  shm_fd, 				  // SHM descriptor from shm_open() 
 				  0);
-	
+				  
+	sem_init(&shm_ptr->sem_empty, 1, 1); // pshared != 0 + semephore in shared memory => writer gets first turn !!!
+	sem_init(&shm_ptr->sem_full,  1, 0); // pshared != 0 + semephore in shared memory
+				  
 	pid = fork();
 	if(pid == -1) {
 		exit(EXIT_FAILURE);
 	}
 	else if(pid == 0) {
-		//child - writer	
+		//child - writer		
 		for(int i = 0 ; i < 10; i++) {			
-			sem_wait(sem_empty); 
+			sem_wait(&shm_ptr->sem_empty); 
 				if(i % 2) {
 					strcpy(shm_ptr->name, "Jan");
 					strcpy(shm_ptr->surname, "Nowak");
@@ -50,13 +53,13 @@ int main(int argc, char *argv[])
 					strcpy(shm_ptr->surname, "Kowalski");
 					shm_ptr->age = 23;
 				}				
-			sem_post(sem_full);
+			sem_post(&shm_ptr->sem_full);
 
-			sleep(2);
-		}
+			sleep(1);
+		}		
 		
-		sem_close(sem_empty);
-		sem_close(sem_full);
+		sem_close(&shm_ptr->sem_empty);
+		sem_close(&shm_ptr->sem_full);
 		close(shm_fd);
 		exit(EXIT_SUCCESS);
 	}
@@ -64,20 +67,20 @@ int main(int argc, char *argv[])
 		//parent - reader
 		person_t per;
 		for(int i = 0 ; i < 10; i++) {				
-			sem_wait(sem_full); 
+			sem_wait(&shm_ptr->sem_full); 
 				memcpy(&per, shm_ptr, sizeof(person_t));
-				memset(shm_ptr, '0', sizeof(person_t));
+				memset(shm_ptr->name, '0', sizeof(person_t) - 2 * sizeof(sem_t));
 				printf("i = %d | %s | %s | %d\n", i, per.name, per.surname, per.age);
-			sem_post(sem_empty);
+			sem_post(&shm_ptr->sem_empty);
 		}
 		
 		wait(&status);
 		
-		sem_close(sem_empty);
-		sem_close(sem_full);
+		sem_close(&shm_ptr->sem_empty);
+		sem_close(&shm_ptr->sem_full);
 		close(shm_fd);
-		sem_unlink("/my_sem_full");
-		sem_unlink("/my_sem_empty");
+		sem_destroy(&shm_ptr->sem_empty);
+		sem_destroy(&shm_ptr->sem_full);
 		shm_unlink("/my_shm");
 		exit(EXIT_SUCCESS);
 	}

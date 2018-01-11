@@ -1,94 +1,106 @@
 #include <stdio.h>
-#include <stdlib.h>
 #include <unistd.h>
+#include <stdlib.h>
 #include <semaphore.h>
-#include <sys/shm.h>
-#include <sys/ipc.h>
+#include <fcntl.h>
+#include <sys/wait.h>
+#include <sys/mman.h>
 
 #define N 10
 
-unsigned short iterator = 0;
-int *stos;
-
-void push_pop(int *node, int a)
+typedef struct str
 {
-    if(iterator > N || iterator < 1)
+	sem_t pelny;
+	sem_t pusty;
+	int age;
+} str;
+
+unsigned short iterator = 0;
+
+
+int push_pop(int *node, int a)
+{
+    if(iterator > N)
     {
-        exit(EXIT_FAILURE);
+        return -1;
     }
     else
     {
         node[iterator-1] = a;
         iterator++;
+        return node[iterator-1];
     }
 }
 
 int pop_front(int *node)
 {
-    int pop_value;
     if(iterator < 1)
     {
         return -1;
     }
     else
     {
-        pop_value = node[iterator - 1];
         node[iterator-1] = 0;
         iterator--;
-        return node[iterator-1];
+        return node[iterator];
     }
 }
 
 int main()
 {
 	pid_t pid;
-	int shmid, status;
-	sem_t pelny;
-	sem_t pusty;
-	
-	if ((shmid = shmget(IPC_PRIVATE, sizeof(int)*N, IPC_CREAT)) == -1)
-	{
-        perror("shmget error\n");
-        exit(EXIT_FAILURE);
-    }
+	int shm_fd = shm_open("/my_shm", O_CREAT | O_EXCL | O_RDWR, 0600);
+//	int *stos = NULL;
+	str *stos = NULL;
+	int status, wynik;
+	//int a = rand()%30 + 1;
 
-	stos = shmat(shmid, NULL);
-	
-	sem_init(&pusty,  1, 1);
-	sem_init(&pelny,  1, 0);
+//	ftruncate(shm_fd, sizeof(int)*N);
+	ftruncate(shm_fd, sizeof(str));
+//	stos = mmap(NULL, sizeof(int)*N, PROT_READ | PROT_WRITE, MAP_SHARED, shm_fd, 0);
+	stos = mmap(NULL, sizeof(str), PROT_READ | PROT_WRITE, MAP_SHARED, shm_fd, 0);
+	sem_init(&stos->pusty,  1, 1);
+	sem_init(&stos->pelny,  1, 0);
 
-	pid = fork();
-	if(pid == -1)
+	if((pid = fork()) == -1)
 	{
 		perror("fork error\n");
-		exit(EXIT_FAILURE);		
+		return 1;	
 	}
-
 	else if(pid == 0) //dziecko - producent
 	{
-		while(1)
+		for(int i=0;i<30;i++)
 		{
-			sem_wait(&pelny);
-				
-			sem_post(&pusty);
+				sem_wait(&stos->pusty);
+					//wynik = push_pop(stos, a);
+					//printf("Producent wrzucil na stos %d\n", wynik);
+				puts("a");
+				sem_post(&stos->pelny);
+				sleep(1);
 		}
-		sem_close(pelny);
-		sem_close(pusty);
-		shmdt(&stos, NULL);
+		sem_close(&stos->pusty);
+		sem_close(&stos->pelny);
+		close(shm_fd);
 		return 0;
 	}
 	else // rodzic - konsument
 	{
-		while(1)
+		for(int i=0;i<30;i++)
 		{
-			sem_wait(&pusty);
-			
-			sem_post(&pelny);
-			wait(&status);
+			sem_wait(&stos->pelny);
+				//wynik = pop_front(stos);
+				//printf("-----------------------------Konsument sciagnal ze stosu %d\n", wynik);
+			puts("b");
+			sem_post(&stos->pusty);
+
 		}
-		sem_close(pelny);
-		sem_close(pusty);
-		shmdt(&stos, NULL);
+		wait(&status);
+		sem_close(&stos->pusty);
+		sem_close(&stos->pelny);
+		close(shm_fd);
+		sem_destroy(&stos->pusty);
+		sem_destroy(&stos->pelny);
+		shm_unlink("/my_shm");
 		return 0;
 	}
 }
