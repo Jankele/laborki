@@ -18,7 +18,7 @@ typedef struct person_t {
 int main(int argc, char *argv[])
 {
 	person_t * shm_ptr = NULL;
-	int        shm_fd  = shm_open("/my_shm", O_CREAT | O_EXCL | O_RDWR, 0600);
+	int        shm_fd  = shm_open("/my_shmm", O_CREAT | O_EXCL | O_RDWR, 0600);
 	int        pid;
 	int        status;
 	
@@ -55,7 +55,7 @@ int main(int argc, char *argv[])
 				}				
 			sem_post(&shm_ptr->sem_full);
 
-			sleep(1);
+			usleep(100000);
 		}		
 		
 		sem_close(&shm_ptr->sem_empty);
