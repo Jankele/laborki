@@ -1,4 +1,5 @@
 /*
++++ podczas kompilacji trzeab zlinkować -pthread -lrt
 +++ Program zapisuje/odczytuje z tablicy statycznej, ktora reprezentuje stos.
 +++ Stos jest wypełniany pseudolosowymi liczbami z zakresu 1-30.
 +++ Po "zdjeciu" elementu ze stosu pod odpowiednim indeksem tablicy wstawiana jest liczba 0.
@@ -51,15 +52,17 @@ int main()
 	}
 	else if(pid == 0) //dziecko - producent
 	{
-		for(int i=0;i<PETLA;i++)
+		printf("PRODUCENT MOWI: MOJ PID TO: %d\n", getpid());
+   		printf("PRODUCENT MOWI: PID MOJEGO RODZICA TO: %d\n", getppid());
+		for(int i=0;i<PETLA;i++) 
 		{
-				//sem_wait(pusty);
+				//sem_wait(pusty); // poczatek sekcji krytycznej
 					wynik = push_pop(stos);
 					if(wynik == -1)
 						puts("Stos jest przepełniony!");
 					else
 						printf("PRODUCENT WRZUCIL NA STOS %d\n", wynik);
-				//sem_post(pelny);
+				//sem_post(pelny); // koniec sekcji krytycznej
 				usleep(SEN_P);
 		}
 		/*sem_close(pusty);
@@ -69,15 +72,17 @@ int main()
 	}
 	else // rodzic - konsument
 	{
-		for(int i=0;i<PETLA;i++)
+		printf("KONSUMENT MOWI: MOJ PID TO: %d\n", getpid());
+   		printf("KONSUMENT MOWI: PID MOJEGO RODZICA TO: %d\n", getppid());
+		for(int i=0;i<PETLA;i++) 
 		{
-		//	sem_wait(pelny);
+			//sem_wait(pelny); // poczatek sekcji krytycznej
 				wynik = pop_front(stos);
 				if(wynik == -1)
 					puts("Stos jest pusty!");
 				else
 					printf("----------------------KONSUMENT SCIAGNAL ZE STOSU %d\n", wynik);
-		//	sem_post(pusty);
+			//sem_post(pusty); // koniec sekcji krytycznej
 			usleep(SEN_K);
 		}
 		puts("Rodzic zakonczyl swoja prace");
