@@ -26,7 +26,8 @@
 
 #define N 5 //ilosc elementow w tablicy
 #define PETLA 40 //ilosc przejsc w petlach for
-
+#define SEN_P 10000 // dlugosc snu w procesie producenta
+#define SEN_K 20000 //dlugosc snu w procesie konsumenta
 int push_pop(int *node);
 int pop_front(int *node);
 
@@ -58,7 +59,7 @@ int main()
 					else
 						printf("PRODUCENT WRZUCIL NA STOS %d\n", wynik);
 				//sem_post(pelny);
-				usleep(19000);
+				usleep(SEN_P);
 		}
 		/*sem_close(pusty);
 		sem_close(pelny);*/
@@ -76,7 +77,7 @@ int main()
 				else
 					printf("----------------------KONSUMENT SCIAGNAL ZE STOSU %d\n", wynik);
 		//	sem_post(pusty);
-				usleep(60000);
+			usleep(SEN_K);
 		}
 		puts("Rodzic zakonczyl swoja prace");
 		wait(&status); // czekaj na zakonczenie procesu dziecka
