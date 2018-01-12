@@ -28,6 +28,7 @@
 #define PETLA 40 //ilosc przejsc w petlach for
 #define SEN_P 10000 // dlugosc snu w procesie producenta
 #define SEN_K 20000 //dlugosc snu w procesie konsumenta
+
 int push_pop(int *node);
 int pop_front(int *node);
 
@@ -92,7 +93,7 @@ int main()
 
 int push_pop(int *node)
 {
-	unsigned short a = rand()%30 + 1; //losowanie z przedzialu <1-31>
+	unsigned short a = rand()%30 + 1; //losowanie z przedzialu <1-30>
 	unsigned short iterator = 0;
 	for(int i=0;i<N;i++) //zlicza ilosc elementow na stosie (czyli niezerowych)
 	{
