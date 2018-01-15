@@ -26,7 +26,7 @@ char *czytaj_plik(const char *plik)
 
 	if(fd = fopen(plik, "rb"))
 	{
-		fseek(fd, 0L, SEEK_END);
+		fseek(fd, 0, SEEK_END);
 		dlugosc = ftell(fd);
 		rewind(fd);
 		++dlugosc;
