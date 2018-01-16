@@ -1,0 +1,50 @@
+from functions:
+
+void sortowanie_listy(lista **glowa){ //sortowanie rosnaco
+	
+	lista* pomocnicza_ostatni = NULL;
+	lista* pomocnicza = NULL;
+	lista* pomocnicza_nastepny = NULL;
+	lista* pomocnicza_kontener = NULL;
+	
+	
+	int iterator = 1;
+	
+
+	while(iterator > 0){
+		pomocnicza_ostatni = NULL;
+		pomocnicza = *glowa;
+		pomocnicza_nastepny = (*glowa) -> next;		
+		iterator = 0;
+		while(pomocnicza_nastepny != NULL){
+
+			if(pomocnicza_nastepny -> lisc -> ilosc < pomocnicza -> lisc -> ilosc){
+				pomocnicza_kontener = NULL;
+				if(pomocnicza_ostatni != NULL){
+					pomocnicza_ostatni -> next = pomocnicza_nastepny;
+				}
+
+				pomocnicza_kontener = pomocnicza;
+				pomocnicza = pomocnicza_nastepny;
+				pomocnicza_nastepny = pomocnicza_kontener;
+				pomocnicza_nastepny -> next = pomocnicza -> next;
+				pomocnicza -> next = pomocnicza_nastepny;
+
+				if(pomocnicza_ostatni != NULL && pomocnicza_ostatni -> next == *glowa){
+					*glowa = pomocnicza_ostatni;
+				}
+
+				else if(pomocnicza_nastepny == *glowa) {
+					*glowa = pomocnicza;
+				}
+
+				iterator++;
+			}
+
+			pomocnicza_ostatni = pomocnicza;
+			pomocnicza = pomocnicza -> next;
+			pomocnicza_nastepny = pomocnicza-> next;
+		}
+
+	}
+}
