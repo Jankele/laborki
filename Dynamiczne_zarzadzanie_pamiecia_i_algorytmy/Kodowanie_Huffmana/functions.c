@@ -2,6 +2,7 @@
 #include <stdio.h> //printf, etc.
 #include <string.h> //strlen, etc.
 #include "functions.h"
+
 /*
 ////////////////////////////////////////////////////////////////////////////////////
 ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
@@ -45,15 +46,15 @@ DONE!
 ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
 \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 */
-void stworz_glowe(char znak, lista **glowa)
+void stworz_glowe(char znak)
 {
-	*glowa = malloc(sizeof(lista));
-	(*glowa)->lisc = malloc(sizeof(node));
-	(*glowa)->next = NULL;
-	(*glowa)->lisc->znak = znak;
-	(*glowa)->lisc->lewa = NULL;
-	(*glowa)->lisc->prawa = NULL;
-	(*glowa)->lisc->ilosc = 1;
+	glowa = malloc(sizeof(lista));
+	glowa->lisc = malloc(sizeof(node));
+	glowa->next = NULL;
+	glowa->lisc->znak = znak;
+	glowa->lisc->lewa = NULL;
+	glowa->lisc->prawa = NULL;
+	glowa->lisc->ilosc = 1;
 }
 /*
 ////////////////////////////////////////////////////////////////////////////////////
@@ -64,11 +65,11 @@ DONE!
 ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
 \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 */
-void dodanie_elementu_na_poczatek_oraz_zliczanie_powtorzen(char znak, lista **glowa)
+void dodanie_elementu_na_poczatek_oraz_zliczanie_powtorzen(char znak)
 {	
 	//FUNKCJA TWORZY
 		lista *tmp = NULL; 
-		tmp = *glowa;
+		tmp = glowa;
 		int czy_znak_wystapil = 0;
 		while(tmp)
 		{
@@ -90,8 +91,8 @@ void dodanie_elementu_na_poczatek_oraz_zliczanie_powtorzen(char znak, lista **gl
 		tmp->lisc->lewa = NULL;
 		tmp->lisc->prawa = NULL;
 		tmp->lisc->ilosc = 1;
-		tmp->next = *glowa;
-		*glowa = tmp;
+		tmp->next = glowa;
+		glowa = tmp;
 		}
 }
 /*
@@ -103,7 +104,7 @@ DONE!
 ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
 \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 */
-void wyswietl_powtorzenia(lista *glowa)
+void wyswietl_powtorzenia()
 {
 	lista *tmp = NULL;
 	tmp = glowa;
@@ -131,11 +132,10 @@ DONE!
 ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
 \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 */
-
-void zloz_liste(int dlugosc, lista **glowa, char *tekst)
+void zloz_liste(int dlugosc, char *tekst)
 {
 	for(int i=1;i<dlugosc;i++)
-		dodanie_elementu_na_poczatek_oraz_zliczanie_powtorzen(tekst[i], glowa);
+		dodanie_elementu_na_poczatek_oraz_zliczanie_powtorzen(tekst[i]);
 }
 /*
 ////////////////////////////////////////////////////////////////////////////////////
@@ -146,8 +146,7 @@ DONE!
 ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
 \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 */
-
-void sortowanie_listy(lista **glowa)
+void sortowanie_listy()
 {
 	lista *pom = NULL; // obecnie sprawdzany element
 	lista *pom_next = NULL; // element nastepny
@@ -155,9 +154,9 @@ void sortowanie_listy(lista **glowa)
 	lista *pom_kontener = NULL; 
 	lista *warunek = NULL;
 
-	while((*glowa)->next != warunek)
+	while(glowa->next != warunek)
 	{
-		pom = *glowa;
+		pom = glowa;
 		pom2 = pom;
 		pom_next = pom->next;
 		while(pom != warunek)
@@ -167,9 +166,9 @@ void sortowanie_listy(lista **glowa)
 				pom_kontener = pom_next->next;
 				pom_next->next = pom;
 				pom->next = pom_kontener;
-				if(pom == *glowa)
+				if(pom == glowa)
 				{
-					*glowa = pom_next;
+					glowa = pom_next;
 					pom2 = pom_next;
 				}
 				else
@@ -193,47 +192,125 @@ void sortowanie_listy(lista **glowa)
 ////////////////////////////////////////////////////////////////////////////////////
 ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
 ------------------------------------------------------------------------------------
-TODO ---  WSZYSTKO
+TODO - OGARNAC!
 ------------------------------------------------------------------------------------
 ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
 \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 */
-
-void stworz_drzewo_HF(lista **glowa, node **wezel)
+void stworz_drzewo_HF()
 {
-
-}
-/*
-////////////////////////////////////////////////////////////////////////////////////
-||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
-------------------------------------------------------------------------------------
-TODO ---  WSZYSTKO
-------------------------------------------------------------------------------------
-||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
-\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
-*/
-void usun_drzewo_HF(node **wezel)
-{
-
-	if(*wezel)
+	if(glowa->next == NULL)
 	{
-		usun_drzewo_HF((*wezel)->lewa);
-		usun_drzewo_HF((*wezel)->prawa);
-		free(*wezel);	
+		wezel = glowa->lisc;
+		free(glowa);
+		glowa = NULL;
 	}
+	else
+	{
+		node* pop_kontener = NULL;
+		node* pop_kontener2 = NULL;
+
+		if(glowa != NULL)
+		{
+			lista* tmp = glowa;
+			glowa = tmp->next;
+			pop_kontener = tmp->lisc;
+			free(tmp);
+		}
+		if(glowa != NULL)
+		{
+			lista* tmp2 = glowa;
+			glowa = tmp2->next;
+			pop_kontener2 = tmp2->lisc;
+			free(tmp2);
+		}
+
+		lista* polaczone_kontenery = NULL;
+		polaczone_kontenery  = malloc(sizeof(lista));
+		polaczone_kontenery -> lisc = malloc(sizeof(node));
+		polaczone_kontenery -> lisc -> znak = '*';
+		polaczone_kontenery -> lisc -> ilosc = pop_kontener -> ilosc + pop_kontener2 -> ilosc;
+		polaczone_kontenery -> lisc -> valid = 0;
+		polaczone_kontenery -> lisc -> kod = NULL;
+		polaczone_kontenery -> lisc -> lewa = NULL;
+		polaczone_kontenery -> lisc -> prawa = NULL;
+		    
+		if(pop_kontener -> ilosc > pop_kontener2 -> ilosc)
+		{
+		    polaczone_kontenery -> lisc -> lewa = pop_kontener;
+		    polaczone_kontenery -> lisc -> prawa = pop_kontener2;
+		}
+		else
+		{
+		    polaczone_kontenery -> lisc -> lewa = pop_kontener2;
+		    polaczone_kontenery -> lisc -> prawa = pop_kontener;
+		}
+
+		polaczone_kontenery -> next = NULL;  		
+		polaczone_kontenery -> next = glowa;
+		glowa = polaczone_kontenery;
+
+		sortowanie_listy(glowa);
+	}
+
 }
 /*
 ////////////////////////////////////////////////////////////////////////////////////
 ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
 ------------------------------------------------------------------------------------
-TODO ---  WSZYSTKO
+TODO - OGARNAC!
 ------------------------------------------------------------------------------------
 ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
 \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 */
-void kodowanie_HF()
+void gen_huff_kod(node* pom_kontener, char* kodHT, int generacja, int w_ktora_strone)
 {
 
+	if(pom_kontener != NULL)
+	{
+		pom_kontener -> kod = malloc(generacja+1 * sizeof(char));
+		if(pom_kontener == wezel)
+			sprintf(pom_kontener->kod,"%s","0");
+		else
+			sprintf(pom_kontener->kod,"%s%c",kodHT, w_ktora_strone);
+		
+		if(pom_kontener != wezel && pom_kontener -> znak != '*' && pom_kontener-> valid == 1)
+		{	
+			node* tmp = NULL;
+			tmp = malloc(sizeof(node));
+			tmp -> ilosc = pom_kontener -> ilosc;
+			tmp -> znak = pom_kontener -> znak;
+			tmp -> kod = malloc(generacja+1 * sizeof(char));
+			sprintf(tmp->kod,"%s%c",kodHT, w_ktora_strone);
+			tmp -> lewa = glowa_listy;
+			glowa_listy = tmp;
+			dlugosc_kodu += generacja * tmp -> ilosc; 
+		} 
+		
+		if(pom_kontener->left != NULL)
+			gen_huff_kod(pom_kontener->left, pom_kontener->kod, generacja+1, LEFT);
+		if(pom_kontener->right != NULL)
+			gen_huff_kod(pom_kontener->right, pom_kontener->kod, generacja+1, RIGHT);
+	}
+
+}
+/*
+////////////////////////////////////////////////////////////////////////////////////
+||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+------------------------------------------------------------------------------------
+DONE???
+------------------------------------------------------------------------------------
+||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+*/
+void usun_drzewo_HF()
+{
+	if(wezel)
+	{
+		usun_drzewo_HF(wezel->lewa);
+		usun_drzewo_HF(wezel->prawa);
+		free(wezel);	
+	}
 }
 /*
 ////////////////////////////////////////////////////////////////////////////////////
@@ -252,14 +329,22 @@ void sformatuj_tekst(char *tekst, size_t dlugosc)
 	puts("");
 	puts("-------------------------------------------");
 }
-
-void zniszcz_liste(lista **glowa)
+/*
+////////////////////////////////////////////////////////////////////////////////////
+||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+------------------------------------------------------------------------------------
+DONE!
+------------------------------------------------------------------------------------
+||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+*/
+void zniszcz_liste()
 {
-		while(*glowa)
+		while(glowa)
 		{
 			lista* tmp = NULL;
-			tmp = *glowa;
-			*glowa = tmp->next;
+			tmp = glowa;
+			glowa = tmp->next;
 			free(tmp);
 		}
 }

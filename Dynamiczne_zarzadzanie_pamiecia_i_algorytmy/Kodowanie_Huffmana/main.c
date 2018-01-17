@@ -14,6 +14,12 @@
 #include <string.h> //strlen, etc.
 #include "functions.h"
 
+node *wezel = NULL;
+lista *glowa = NULL;
+node *glowa_listy = NULL;
+
+char *tekst_zakodowany = NULL;
+int dlugosc_kodu;
 /*
 ////////////////////////////////////////////////////////////////////////////////////
 ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
@@ -27,27 +33,58 @@ DOKONCZYC PROGRAM ;P
 
 int main()
 {
-	node *wezel = NULL;
-	lista *glowa = NULL;
+
+	int dlugosc_kodu;
 	char plik[100];
-	printf("Podaj nazwe pliku tekstowego do zakodowania: ");
-	scanf("%s", plik);
-	char *tekst = czytaj_plik(plik);
+	//printf("Podaj nazwe pliku tekstowego do zakodowania: ");
+	//scanf("%s", plik);
+	char *tekst = czytaj_plik("tekst.txt");
 	int dlugosc = strlen(tekst);
 
 	sformatuj_tekst("TRESC TEKSTU Z WCZYTANEGO PLIKU",31);
 	printf("%s\n", tekst);
 
-	stworz_glowe(tekst[0], &glowa);
-	zloz_liste(dlugosc, &glowa, tekst);
+	stworz_glowe(tekst[0]);
+	zloz_liste(dlugosc, tekst);
 
 	sformatuj_tekst("LISTA ZNAKOW ZE STOSU, PRZED SORTOWANIEM", 42);
-	wyswietl_powtorzenia(glowa);
+	wyswietl_powtorzenia();
 
-	sortowanie_listy(&glowa);
-
+	sortowanie_listy();
 	sformatuj_tekst("LISTA ZNAKOW ZE STOSU, PO SORTOWANIU", 37);
-	wyswietl_powtorzenia(glowa);
+	wyswietl_powtorzenia();
+
+	while(glowa != NULL)
+		stworz_drzewo_HF();
+	puts("asddsfsdfsdfsdfsdfsdf");
+	tekst_zakodowany = calloc(dlugosc_kodu +1, sizeof(char));
+
+
+	int i = 0;
+		while(tekst[i] != '\0'){
+		 	char* code = NULL;
+
+
+
+	node* current = NULL;
+	current = dictionary_head;
+
+	while(current != NULL){
+		if(current -> znak == tekst[i]){
+			//return symbol code
+			char* code = calloc(strlen(current->kod)+1,sizeof(char));
+			memcpy(code,current->kod,strlen(current->kod));
+		}
+		current = current->lewa;
+	}
+
+		 	
+		 	
+		 	strcat(tekst_zakodowany,code);
+		 	free(code);
+		 	i++;
+		}
+
 
 	sformatuj_tekst("TRESC TEKSTU PO ZAKODOWANIU", 27);
 	printf("W BUDOWIE\n\n");
@@ -58,7 +95,9 @@ int main()
 	sformatuj_tekst("ROZMIAR ZAKODOWANEGO TEKSTU W BITACH",36);
 	printf("W BUDOWIE\n\n");
 
-	zniszcz_liste(&glowa);
-
+	zniszcz_liste();
+	//usun_drzewo_HF();
+	free(tekst_zakodowany);
+	free(tekst);
 	return EXIT_SUCCESS;
 }
