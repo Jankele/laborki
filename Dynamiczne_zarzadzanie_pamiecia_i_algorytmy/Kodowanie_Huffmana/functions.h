@@ -22,3 +22,4 @@ void usun_drzewo_HF();
 void kodowanie_HF();
 void zloz_liste(int dlugosc, lista **glowa, char *tekst);
 void sformatuj_tekst(char *tekst, size_t dlugosc);
+void zniszcz_liste(lista **glowa);

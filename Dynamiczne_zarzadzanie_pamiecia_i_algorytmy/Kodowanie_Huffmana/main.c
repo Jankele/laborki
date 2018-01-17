@@ -2,8 +2,7 @@
 	01.2018
 	Jan Komorkiewicz
 --------------------------------------------------------
-AAA*
-+++ Czytamy z pliku tekst.txt ktory musi znajdowac sie w tym samym katologu w ktorym uruchamiamy program.
++++ Czytamy z pliku podanego na starcie programu, ktory musi znajdowac sie w tym samym katologu w ktorym uruchamiamy program.
 +++ Adres glowy przekazywany jest do funkcji jako wartosc, dzieki czemu nie musze uzywac zmiennych globalnych.
 +++ Funkcja wyswietlajaca ilosc wystapien danego znaku nie zapewnia obslugi wszystkich znakow specjalnych,
 	przez co znaki tj. "vertical tab" lub niektore znaki oprocz spacji i znaku EOL moga sie wyswietlac bez opisu.
@@ -19,11 +18,8 @@ AAA*
 ////////////////////////////////////////////////////////////////////////////////////
 ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
 ------------------------------------------------------------------------------------
-TODO ---  DOKONCZYC DOKUMENTACJE U GORY AAA* ,
-SFORMATOWAC WYSWIETLANIE WYJSCIA STD ZEBY LADNIE WYGLADALO,
-OPISAC URUCHAMIANIE ZE MAKE RUN I POTEM DODAC OBSLUGE WLASNYCH PLIKOW TEKSTOWYCH
-JESC, SPAC, KODOWAC, PUSHOWAC ! ;P
-JESLI CZYTA TO JAKIS PIECZON, TO GURWA DO ROBOTY!!! DZIODO I BEDALE!!!
+TODO ---  DOKONCZYC DOKUMENTACJE U GORY,
+DOKONCZYC PROGRAM ;P
 ------------------------------------------------------------------------------------
 ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
 \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
@@ -33,8 +29,10 @@ int main()
 {
 	node *wezel = NULL;
 	lista *glowa = NULL;
-
-	char *tekst = czytaj_plik("tekst.txt");
+	char plik[100];
+	printf("Podaj nazwe pliku tekstowego do zakodowania: ");
+	scanf("%s", plik);
+	char *tekst = czytaj_plik(plik);
 	int dlugosc = strlen(tekst);
 
 	sformatuj_tekst("TRESC TEKSTU Z WCZYTANEGO PLIKU",31);
@@ -43,12 +41,12 @@ int main()
 	stworz_glowe(tekst[0], &glowa);
 	zloz_liste(dlugosc, &glowa, tekst);
 
-	sformatuj_tekst("LISTA ZNAKOW ZE STOSU, PRZED POSORTOWANIEM", 42);
+	sformatuj_tekst("LISTA ZNAKOW ZE STOSU, PRZED SORTOWANIEM", 42);
 	wyswietl_powtorzenia(glowa);
 
 	sortowanie_listy(&glowa);
 
-	sformatuj_tekst("LISTA ZNAKOW ZE STOSU, PO POSORTOWANIU", 38);
+	sformatuj_tekst("LISTA ZNAKOW ZE STOSU, PO SORTOWANIU", 37);
 	wyswietl_powtorzenia(glowa);
 
 	sformatuj_tekst("TRESC TEKSTU PO ZAKODOWANIU", 27);
@@ -59,6 +57,8 @@ int main()
 
 	sformatuj_tekst("ROZMIAR ZAKODOWANEGO TEKSTU W BITACH",36);
 	printf("W BUDOWIE\n\n");
-	
+
+	zniszcz_liste(&glowa);
+
 	return EXIT_SUCCESS;
 }
