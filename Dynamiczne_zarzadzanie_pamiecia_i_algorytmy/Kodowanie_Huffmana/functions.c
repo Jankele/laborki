@@ -147,7 +147,7 @@ DONE!
 \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 */
 
-void sortowanie_listy(lista **head)
+void sortowanie_listy(lista **glowa)
 {
 	lista *pom = NULL; // obecnie sprawdzany element
 	lista *pom_next = NULL; // element nastepny
@@ -155,9 +155,9 @@ void sortowanie_listy(lista **head)
 	lista *pom_kontener = NULL; 
 	lista *warunek = NULL;
 
-	while((*head)->next != warunek)
+	while((*glowa)->next != warunek)
 	{
-		pom = *head;
+		pom = *glowa;
 		pom2 = pom;
 		pom_next = pom->next;
 		while(pom != warunek)
@@ -167,9 +167,9 @@ void sortowanie_listy(lista **head)
 				pom_kontener = pom_next->next;
 				pom_next->next = pom;
 				pom->next = pom_kontener;
-				if(pom == *head)
+				if(pom == *glowa)
 				{
-					*head = pom_next;
+					*glowa = pom_next;
 					pom2 = pom_next;
 				}
 				else
@@ -198,7 +198,8 @@ TODO ---  WSZYSTKO
 ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
 \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 */
-void stworz_drzewo_HF()
+
+void stworz_drzewo_HF(lista **glowa, node **wezel)
 {
 
 }
@@ -211,9 +212,15 @@ TODO ---  WSZYSTKO
 ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
 \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 */
-void usun_drzewo_HF()
+void usun_drzewo_HF(node **wezel)
 {
 
+	if(*wezel)
+	{
+		usun_drzewo_HF((*wezel)->lewa);
+		usun_drzewo_HF((*wezel)->prawa);
+		free(*wezel);	
+	}
 }
 /*
 ////////////////////////////////////////////////////////////////////////////////////
