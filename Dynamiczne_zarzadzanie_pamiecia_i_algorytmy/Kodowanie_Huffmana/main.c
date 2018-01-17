@@ -5,7 +5,6 @@
 AAA*
 +++ Czytamy z pliku tekst.txt ktory musi znajdowac sie w tym samym katologu w ktorym uruchamiamy program.
 +++ Adres glowy przekazywany jest do funkcji jako wartosc, dzieki czemu nie musze uzywac zmiennych globalnych.
-+++ Program wczytuje tylko pierwsza linie pliku tekstowego.
 +++ Funkcja wyswietlajaca ilosc wystapien danego znaku nie zapewnia obslugi wszystkich znakow specjalnych,
 	przez co znaki tj. "vertical tab" lub niektore znaki oprocz spacji i znaku EOL moga sie wyswietlac bez opisu.
 +++ 
@@ -20,11 +19,11 @@ AAA*
 ////////////////////////////////////////////////////////////////////////////////////
 ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
 ------------------------------------------------------------------------------------
-TODO ---  DOKONCZYC DOKUMENTACJE U GORY AAA* , ZROBIC FUNKCJE Z TWORZENIA LISTY BBB*
+TODO ---  DOKONCZYC DOKUMENTACJE U GORY AAA* ,
 SFORMATOWAC WYSWIETLANIE WYJSCIA STD ZEBY LADNIE WYGLADALO,
 OPISAC URUCHAMIANIE ZE MAKE RUN I POTEM DODAC OBSLUGE WLASNYCH PLIKOW TEKSTOWYCH
-JESC, SPAC, KODOWAC! ;P
-JESLI CZYTA TO JAKIS PIECZON, TO KURWA DO ROBOTY!!! DZIODO I BEDALE!!!
+JESC, SPAC, KODOWAC, PUSHOWAC ! ;P
+JESLI CZYTA TO JAKIS PIECZON, TO GURWA DO ROBOTY!!! DZIODO I BEDALE!!!
 ------------------------------------------------------------------------------------
 ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
 \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
@@ -33,17 +32,33 @@ JESLI CZYTA TO JAKIS PIECZON, TO KURWA DO ROBOTY!!! DZIODO I BEDALE!!!
 int main()
 {
 	node *wezel = NULL;
-	lista *glowa = NULL; 
+	lista *glowa = NULL;
+
 	char *tekst = czytaj_plik("tekst.txt");
-	printf("%s\n", tekst);
 	int dlugosc = strlen(tekst);
-	printf("Ilosc znakow: %d\n\n", dlugosc);
+
+	sformatuj_tekst("TRESC TEKSTU Z WCZYTANEGO PLIKU",31);
+	printf("%s\n", tekst);
+
 	stworz_glowe(tekst[0], &glowa);
-	// BBB*
-	for(int i=1;i<dlugosc;i++)
-		dodanie_elementu_na_poczatek_oraz_zliczanie_powtorzen(tekst[i], &glowa);
+	zloz_liste(dlugosc, &glowa, tekst);
+
+	sformatuj_tekst("LISTA ZNAKOW ZE STOSU, PRZED POSORTOWANIEM", 42);
 	wyswietl_powtorzenia(glowa);
+
 	sortowanie_listy(&glowa);
+
+	sformatuj_tekst("LISTA ZNAKOW ZE STOSU, PO POSORTOWANIU", 38);
 	wyswietl_powtorzenia(glowa);
+
+	sformatuj_tekst("TRESC TEKSTU PO ZAKODOWANIU", 27);
+	printf("W BUDOWIE\n\n");
+
+	sformatuj_tekst("ROZMIAR CZYSTEGO TEKSTU W BITACH",32);
+	printf("%d\n\n", dlugosc*8);
+
+	sformatuj_tekst("ROZMIAR ZAKODOWANEGO TEKSTU W BITACH",36);
+	printf("W BUDOWIE\n\n");
+	
 	return EXIT_SUCCESS;
 }

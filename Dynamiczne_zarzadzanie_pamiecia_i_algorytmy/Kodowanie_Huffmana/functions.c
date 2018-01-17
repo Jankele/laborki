@@ -6,8 +6,7 @@
 ////////////////////////////////////////////////////////////////////////////////////
 ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
 ------------------------------------------------------------------------------------
-DONE? JAK BEDZIE CZAS SPROBOWAC WCZYTYWANIE WIELU LINII I WSZYSTKICH ZNAKOW?
-RACZEJ NIE BEDZIE CZASU...
+DONE!
 ------------------------------------------------------------------------------------
 ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
 \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
@@ -23,10 +22,11 @@ char *czytaj_plik(const char *plik)
 		fseek(fd, 0, SEEK_END);
 		dlugosc = ftell(fd);
 		rewind(fd);
-		++dlugosc;
 		if(!(tekst = malloc(sizeof(char) * dlugosc)))
 			puts("Nie mozna przypisac pamieci dla zmiennej tekst!");
-		fgets(tekst, dlugosc, fd);
+		fread(tekst, dlugosc, 1, fd);
+		// tylko funkcja fread mozna bezproblemowo i bez uzywania petli
+		// mozna skopiowac cala zawartosc pliku do tablicy razem z bialymi znakami
 		fclose(fd);
 	}
 	else
@@ -110,11 +110,13 @@ void wyswietl_powtorzenia(lista *glowa)
 	while(tmp)
 	{
 		if(tmp->lisc->znak == 32)
-			printf("Spacja : %d\n", tmp->lisc->ilosc);
+			printf("Znak Spacja %5d\n", tmp->lisc->ilosc);
 		else if(tmp->lisc->znak == 10)
-			printf("Znak EOL : %d\n", tmp->lisc->ilosc);
+			printf("Znak EOL%9d\n", tmp->lisc->ilosc);
+		else if(tmp->lisc->znak == 9)
+			printf("Znak TAB%9d\n", tmp->lisc->ilosc);
 		else
-			printf("Znak %c : %d\n", tmp->lisc->znak, tmp->lisc->ilosc);
+			printf("Znak %c %10d\n", tmp->lisc->znak, tmp->lisc->ilosc);
 		tmp = tmp->next;
 	}
 	free(tmp);
@@ -124,52 +126,66 @@ void wyswietl_powtorzenia(lista *glowa)
 ////////////////////////////////////////////////////////////////////////////////////
 ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
 ------------------------------------------------------------------------------------
-TODO ---  NAZWAC ZMIENNE PO LUDZKU, SPRAWDZIC CZY NIE MA WYCIEKOW, ZOPTYMALIZOWAC?
+DONE!
 ------------------------------------------------------------------------------------
 ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
 \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 */
+
+void zloz_liste(int dlugosc, lista **glowa, char *tekst)
+{
+	for(int i=1;i<dlugosc;i++)
+		dodanie_elementu_na_poczatek_oraz_zliczanie_powtorzen(tekst[i], glowa);
+}
+/*
+////////////////////////////////////////////////////////////////////////////////////
+||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+------------------------------------------------------------------------------------
+DONE?
+------------------------------------------------------------------------------------
+||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+*/
+
 void sortowanie_listy(lista **head)
 {
-	lista *a = NULL;
-	lista *b = NULL; 
-	lista *c = NULL;
-	lista *e = NULL; 
-	lista *tmp = NULL; 
+	lista *pom = NULL; // obecnie sprawdzany element
+	lista *pom_next = NULL; // element nastepny
+	lista *pom2 = NULL;
+	lista *pom_kontener = NULL; 
+	lista *warunek = NULL;
 
-	while(e != (*head)->next)
+	while((*head)->next != warunek)
 	{
-		c = a = *head;
-		b = a->next;
-		while(a != e)
+		pom = *head;
+		pom2 = pom;
+		pom_next = pom->next;
+		while(pom != warunek)
 		{
-			if(a->lisc->ilosc > b->lisc->ilosc)
+			if(pom->lisc->ilosc > pom_next->lisc->ilosc)
 			{
-				if(a == *head)
+				pom_kontener = pom_next->next;
+				pom_next->next = pom;
+				pom->next = pom_kontener;
+				if(pom == *head)
 				{
-					tmp = b -> next;
-					b->next = a;
-					a->next = tmp;
-					*head = b;
-					c = b;
+					*head = pom_next;
+					pom2 = pom_next;
 				}
 				else
 				{
-					tmp = b->next;
-					b->next = a;
-					a->next = tmp;
-					c->next = b;
-					c = b;
+					pom2->next = pom_next;
+					pom2 = pom_next;
 				}
 			}
 			else
 			{
-				c = a;
-				a = a->next;
+				pom2 = pom;
+				pom = pom->next;
 			}
-			b = a->next;
-			if(b == e)
-				e = a;
+			pom_next = pom->next;
+			if(pom_next == warunek)
+				warunek = pom;
 		}
 	}
 }
@@ -186,12 +202,38 @@ void stworz_drzewo_HF()
 {
 
 }
+/*
+////////////////////////////////////////////////////////////////////////////////////
+||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+------------------------------------------------------------------------------------
+TODO ---  WSZYSTKO
+------------------------------------------------------------------------------------
+||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+*/
 void usun_drzewo_HF()
 {
 
 }
-
+/*
+////////////////////////////////////////////////////////////////////////////////////
+||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+------------------------------------------------------------------------------------
+TODO ---  WSZYSTKO
+------------------------------------------------------------------------------------
+||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+*/
 void kodowanie_HF()
 {
 
+}
+
+void sformatuj_tekst(char *tekst, size_t dlugosc)
+{
+	puts("-------------------------------------------");
+	for(int i=0;i<dlugosc;i++)
+		printf("%c", tekst[i]);
+	puts("");
+	puts("-------------------------------------------");
 }

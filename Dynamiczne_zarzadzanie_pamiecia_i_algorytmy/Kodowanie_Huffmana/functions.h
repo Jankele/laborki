@@ -20,3 +20,5 @@ void sortowanie_listy(lista **glowa);
 void stworz_drzewo_HF();
 void usun_drzewo_HF();
 void kodowanie_HF();
+void zloz_liste(int dlugosc, lista **glowa, char *tekst);
+void sformatuj_tekst(char *tekst, size_t dlugosc);
