@@ -1,10 +1,11 @@
 #define LEWA_GALAZ 0
-#define PRAWA 1
+#define PRAWA_GALAZ 1
 
 typedef struct node
 {
 	char znak;
-	int ilosc, valid;
+	int ilosc;
+	int valid;
 	char *kod;
 	struct node *lewa;
 	struct node *prawa;
@@ -16,9 +17,17 @@ typedef struct lista
 	struct lista *next; 
 } lista;
 
+typedef struct entry
+{
+	char znak;
+	int ilosc;
+	char *kod;
+	struct entry *lewa;
+} entry;
+
 extern node *wezel;
 extern lista *glowa;
-extern node* glowa_listy;
+extern entry* glowa_listy;
 extern char *tekst_zakodowany;
 extern int dlugosc_kodu;
 
@@ -29,7 +38,8 @@ void wyswietl_powtorzenia();
 void zloz_liste(int dlugosc, char *tekst);
 void sortowanie_listy();
 void stworz_drzewo_HF();
-void gen_huff_kod(node* pom_kontener, char* kodHT, int generacja, int w_ktora_strone);
+void kodowanieHT(node* pom_kontener, char* kodHT, int generacja, int w_ktora_strone);
 void usun_drzewo_HF();
 void sformatuj_tekst(char *tekst, size_t dlugosc);
 void zniszcz_liste();
+char *przeszukaj_kod(char fragment);

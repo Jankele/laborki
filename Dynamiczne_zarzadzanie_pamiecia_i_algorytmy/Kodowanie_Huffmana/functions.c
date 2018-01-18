@@ -27,7 +27,7 @@ char *czytaj_plik(const char *plik)
 			puts("Nie mozna przypisac pamieci dla zmiennej tekst!");
 		fread(tekst, dlugosc, 1, fd);
 		// tylko funkcja fread mozna bezproblemowo i bez uzywania petli
-		// mozna skopiowac cala zawartosc pliku do tablicy razem z bialymi znakami
+		// mozna skopiowac cala zawartosc pliku do tablicy razem bialymi znakami
 		fclose(fd);
 	}
 	else
@@ -88,6 +88,8 @@ void dodanie_elementu_na_poczatek_oraz_zliczanie_powtorzen(char znak)
 		tmp->lisc = malloc(sizeof(node));
 		tmp->next = NULL;
 		tmp->lisc->znak = znak;
+		tmp->lisc->valid = 1;
+		tmp->lisc->kod = NULL;
 		tmp->lisc->lewa = NULL;
 		tmp->lisc->prawa = NULL;
 		tmp->lisc->ilosc = 1;
@@ -146,6 +148,7 @@ DONE!
 ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
 \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 */
+
 void sortowanie_listy()
 {
 	lista *pom = NULL; // obecnie sprawdzany element
@@ -263,7 +266,7 @@ TODO - OGARNAC!
 ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
 \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 */
-void gen_huff_kod(node* pom_kontener, char* kodHT, int generacja, int w_ktora_strone)
+void kodowanieHT(node* pom_kontener, char* kodHT, int generacja, int w_ktora_strone)
 {
 
 	if(pom_kontener != NULL)
@@ -276,7 +279,7 @@ void gen_huff_kod(node* pom_kontener, char* kodHT, int generacja, int w_ktora_st
 		
 		if(pom_kontener != wezel && pom_kontener -> znak != '*' && pom_kontener-> valid == 1)
 		{	
-			node* tmp = NULL;
+			entry* tmp = NULL;
 			tmp = malloc(sizeof(node));
 			tmp -> ilosc = pom_kontener -> ilosc;
 			tmp -> znak = pom_kontener -> znak;
@@ -287,10 +290,10 @@ void gen_huff_kod(node* pom_kontener, char* kodHT, int generacja, int w_ktora_st
 			dlugosc_kodu += generacja * tmp -> ilosc; 
 		} 
 		
-		if(pom_kontener->left != NULL)
-			gen_huff_kod(pom_kontener->left, pom_kontener->kod, generacja+1, LEFT);
-		if(pom_kontener->right != NULL)
-			gen_huff_kod(pom_kontener->right, pom_kontener->kod, generacja+1, RIGHT);
+		if(pom_kontener->lewa != NULL)
+			kodowanieHT(pom_kontener->lewa, pom_kontener->kod, generacja+1, LEWA_GALAZ);
+		if(pom_kontener->prawa != NULL)
+			kodowanieHT(pom_kontener->prawa, pom_kontener->kod, generacja+1, PRAWA_GALAZ);
 	}
 
 }
@@ -347,4 +350,22 @@ void zniszcz_liste()
 			glowa = tmp->next;
 			free(tmp);
 		}
+}
+
+char *przeszukaj_kod(char fragment)
+{
+	entry* dopisz = NULL;
+	dopisz = glowa_listy;
+	while(dopisz != NULL)
+		{
+			if(dopisz->znak == fragment)
+			{	
+				//return symbol code
+				char* code = calloc(strlen(dopisz->kod)+1,sizeof(char));
+				memcpy(code,dopisz->kod,strlen(dopisz->kod));
+				return(code);
+			}
+			dopisz = dopisz->lewa;
+		}
+		return("-");
 }

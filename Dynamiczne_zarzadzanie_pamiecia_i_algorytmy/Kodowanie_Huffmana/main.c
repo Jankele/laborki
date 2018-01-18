@@ -16,8 +16,7 @@
 
 node *wezel = NULL;
 lista *glowa = NULL;
-node *glowa_listy = NULL;
-
+entry *glowa_listy = NULL;
 char *tekst_zakodowany = NULL;
 int dlugosc_kodu;
 /*
@@ -33,20 +32,18 @@ DOKONCZYC PROGRAM ;P
 
 int main()
 {
-
+//deklaracja zmiennych
 	int dlugosc_kodu;
 	char plik[100];
+	
+//wczytanie tekstu
 	//printf("Podaj nazwe pliku tekstowego do zakodowania: ");
 	//scanf("%s", plik);
 	char *tekst = czytaj_plik("tekst.txt");
 	int dlugosc = strlen(tekst);
 
-	sformatuj_tekst("TRESC TEKSTU Z WCZYTANEGO PLIKU",31);
-	printf("%s\n", tekst);
-
 	stworz_glowe(tekst[0]);
 	zloz_liste(dlugosc, tekst);
-
 	sformatuj_tekst("LISTA ZNAKOW ZE STOSU, PRZED SORTOWANIEM", 42);
 	wyswietl_powtorzenia();
 
@@ -54,49 +51,37 @@ int main()
 	sformatuj_tekst("LISTA ZNAKOW ZE STOSU, PO SORTOWANIU", 37);
 	wyswietl_powtorzenia();
 
+//// stworzenie drzewa
 	while(glowa != NULL)
 		stworz_drzewo_HF();
-	puts("asddsfsdfsdfsdfsdfsdf");
-	tekst_zakodowany = calloc(dlugosc_kodu +1, sizeof(char));
-
-
+//// zakodowanie	
+	kodowanieHT(wezel, "-", 1, LEWA_GALAZ);
+	tekst_zakodowany = calloc(dlugosc_kodu+1, sizeof(char));
 	int i = 0;
-		while(tekst[i] != '\0'){
-		 	char* code = NULL;
-
-
-
-	node* current = NULL;
-	current = dictionary_head;
-
-	while(current != NULL){
-		if(current -> znak == tekst[i]){
-			//return symbol code
-			char* code = calloc(strlen(current->kod)+1,sizeof(char));
-			memcpy(code,current->kod,strlen(current->kod));
-		}
-		current = current->lewa;
+	while(tekst[i] != '\0')
+	{
+		char* code = NULL;
+		code = przeszukaj_kod(tekst[i]);		
+		strcat(tekst_zakodowany,code);
+		puts("sdf");
+		free(code);		
+		i++;
 	}
 
-		 	
-		 	
-		 	strcat(tekst_zakodowany,code);
-		 	free(code);
-		 	i++;
-		}
-
+	sformatuj_tekst("TRESC TEKSTU PRZED ZAKODOWANIEM",31);
+	printf("%s\n", tekst);
 
 	sformatuj_tekst("TRESC TEKSTU PO ZAKODOWANIU", 27);
-	printf("W BUDOWIE\n\n");
+	printf("%s", tekst_zakodowany);
 
-	sformatuj_tekst("ROZMIAR CZYSTEGO TEKSTU W BITACH",32);
+	sformatuj_tekst("ROZMIAR TEKSTU W BITACH, PRZED ZAKODOWANIEM",32);
 	printf("%d\n\n", dlugosc*8);
 
-	sformatuj_tekst("ROZMIAR ZAKODOWANEGO TEKSTU W BITACH",36);
-	printf("W BUDOWIE\n\n");
+	sformatuj_tekst("ROZMIAR TEKSTU W BITACH, PO ZAKODOWANIU",36);
+	printf("%d\n\n", dlugosc_kodu);
 
 	zniszcz_liste();
-	//usun_drzewo_HF();
+	usun_drzewo_HF();
 	free(tekst_zakodowany);
 	free(tekst);
 	return EXIT_SUCCESS;
