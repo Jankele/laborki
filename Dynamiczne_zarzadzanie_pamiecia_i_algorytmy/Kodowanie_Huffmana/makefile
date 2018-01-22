@@ -7,3 +7,5 @@ main: main.o funkcje.o
 	gcc main.o funkcje.o -o a.out
 run:
 	./a.out
+clean:
+	rm *.o

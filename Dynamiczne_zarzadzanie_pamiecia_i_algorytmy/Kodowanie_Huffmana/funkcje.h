@@ -31,12 +31,11 @@ void stworz_drzewo_HF();
 void kodowanieHT(node* galaz, char* kodHT, int generacja, char w_ktora_strone);
 void wyswietl_powtorzenia();
 void wyswietl_kod();
-
 void sortowanie_wpisow();
-
 char* przeszukaj_kod(char znak);
 void zniszcz_liste();
 void usun_drzewo_HF(node* galaz);
 void zloz_liste(int dlugosc, char *tekst);
 void sformatuj_tekst(char *tekst, size_t dlugosc);
-void posprzataj(char **tekst);
+void posprzataj(char *tekst, char *zakodowany_tekst);
+void zbuduj_kod(char **zakodowany_tekst, char *tekst);

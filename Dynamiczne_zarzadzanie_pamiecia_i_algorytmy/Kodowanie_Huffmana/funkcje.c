@@ -156,58 +156,61 @@ void sortowanie_wpisow()
 
 void stworz_drzewo_HF()
 {
-	if(glowa->next == NULL)
+	while(glowa)
 	{
-		wezel = glowa->lisc;
-		free(glowa);
-		glowa = NULL;
-	}
-	else
-	{
-		node* pop_kontener = NULL;
-		node* pop_kontener2 = NULL;
-
-		if(glowa)
+		if(glowa->next == NULL)
 		{
-			lista* tmp = glowa;
-			glowa = tmp->next;
-			pop_kontener = tmp->lisc;
-			free(tmp);
-		}
-		if(glowa)
-		{
-			lista* tmp2 = glowa;
-			glowa = tmp2->next;
-			pop_kontener2 = tmp2->lisc;
-			free(tmp2);
-		}
-
-		lista* polaczone_kontenery = NULL;
-		polaczone_kontenery  = malloc(sizeof(lista));
-		polaczone_kontenery -> lisc = malloc(sizeof(node));
-		polaczone_kontenery -> lisc -> znak = '*';
-		polaczone_kontenery -> lisc -> ilosc = pop_kontener -> ilosc + pop_kontener2 -> ilosc;
-		polaczone_kontenery -> lisc -> gotowy = 0;
-		polaczone_kontenery -> lisc -> kod = NULL;
-		polaczone_kontenery -> lisc -> lewa = NULL;
-		polaczone_kontenery -> lisc -> prawa = NULL;
-		    
-		if(pop_kontener -> ilosc > pop_kontener2 -> ilosc)
-		{
-		    polaczone_kontenery -> lisc -> lewa = pop_kontener;
-		    polaczone_kontenery -> lisc -> prawa = pop_kontener2;
+			wezel = glowa->lisc;
+			free(glowa);
+			glowa = NULL;
 		}
 		else
 		{
-		    polaczone_kontenery -> lisc -> lewa = pop_kontener2;
-		    polaczone_kontenery -> lisc -> prawa = pop_kontener;
+			node* pop_kontener = NULL;
+			node* pop_kontener2 = NULL;
+
+			if(glowa)
+			{
+				lista* tmp = glowa;
+				glowa = tmp->next;
+				pop_kontener = tmp->lisc;
+				free(tmp);
+			}
+			if(glowa)
+			{
+				lista* tmp2 = glowa;
+				glowa = tmp2->next;
+				pop_kontener2 = tmp2->lisc;
+				free(tmp2);
+			}
+
+			lista* polaczone_kontenery = NULL;
+			polaczone_kontenery  = malloc(sizeof(lista));
+			polaczone_kontenery -> lisc = malloc(sizeof(node));
+			polaczone_kontenery -> lisc -> znak = '*';
+			polaczone_kontenery -> lisc -> ilosc = pop_kontener -> ilosc + pop_kontener2 -> ilosc;
+			polaczone_kontenery -> lisc -> gotowy = 0;
+			polaczone_kontenery -> lisc -> kod = NULL;
+			polaczone_kontenery -> lisc -> lewa = NULL;
+			polaczone_kontenery -> lisc -> prawa = NULL;
+			    
+			if(pop_kontener -> ilosc > pop_kontener2 -> ilosc)
+			{
+			    polaczone_kontenery -> lisc -> lewa = pop_kontener;
+			    polaczone_kontenery -> lisc -> prawa = pop_kontener2;
+			}
+			else
+			{
+			    polaczone_kontenery -> lisc -> lewa = pop_kontener2;
+			    polaczone_kontenery -> lisc -> prawa = pop_kontener;
+			}
+
+			polaczone_kontenery -> next = NULL;  		
+			polaczone_kontenery -> next = glowa;
+			glowa = polaczone_kontenery;
+
+			sortowanie_listy(glowa);
 		}
-
-		polaczone_kontenery -> next = NULL;  		
-		polaczone_kontenery -> next = glowa;
-		glowa = polaczone_kontenery;
-
-		sortowanie_listy(glowa);
 	}
 }
 
@@ -349,11 +352,26 @@ void sformatuj_tekst(char *tekst, size_t dlugosc)
 	puts("-------------------------------------------");
 }
 
-void posprzataj(char **tekst)
+void posprzataj(char *tekst, char *zakodowany_tekst)
 {
 	zniszcz_liste();
  	usun_drzewo_HF(wezel);
 	free(glowa);
-	free(*tekst);
+	free(tekst);
 	free(zakodowany_tekst);
 }
+
+void zbuduj_kod(char **zakodowany_tekst, char *tekst)
+{
+	int i = 0;
+	
+	while(tekst[i])
+	{
+		 char* kod;
+		 kod = przeszukaj_kod(tekst[i]);
+		 strcat(*zakodowany_tekst,kod);
+		 free(kod);
+		 i++;
+	}
+}
+
