@@ -34,10 +34,10 @@ int main()
 	zloz_liste(dlugosc, tekst);
 	sortowanie_listy();
 	stworz_drzewo_HF();
-	kodowanieHT(wezel, "-", 1, LEWA_GALAZ);
+	kodowanieHT(wezel, "", 1, LEWA_GALAZ);
 	sortowanie_wpisow();
-	zakodowany_tekst = calloc(dlugosc_kodu +1, sizeof(char));
-	zbuduj_kod(&zakodowany_tekst, tekst);
+	zakodowany_tekst = calloc(dlugosc_kodu, sizeof(char));
+	zbuduj_kod(zakodowany_tekst, tekst);
 	{
 		sformatuj_tekst("ROZMIAR TEKSTU W BITACH, PRZED ZAKODOWANIEM",43);
 		printf("%lu\n", dlugosc*sizeof(char)*8);

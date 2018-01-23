@@ -38,4 +38,4 @@ void usun_drzewo_HF(node* galaz);
 void zloz_liste(int dlugosc, char *tekst);
 void sformatuj_tekst(char *tekst, size_t dlugosc);
 void posprzataj(char *tekst, char *zakodowany_tekst);
-void zbuduj_kod(char **zakodowany_tekst, char *tekst);
+void zbuduj_kod(char *zakodowany_tekst, char *tekst);

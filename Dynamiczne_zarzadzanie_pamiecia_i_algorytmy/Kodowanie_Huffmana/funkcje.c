@@ -218,9 +218,9 @@ void kodowanieHT(node* pom_kontener, char* kodHT, int generacja, char w_ktora_st
 {
 	if(pom_kontener)
 	{
-		pom_kontener -> kod = malloc(generacja+1 * sizeof(char));
+		pom_kontener -> kod = malloc(generacja * sizeof(char));
 		if(pom_kontener == wezel)
-			sprintf(pom_kontener->kod,"%s","0");
+			sprintf(pom_kontener->kod,"%s","");
 		else
 			sprintf(pom_kontener->kod,"%s%c",kodHT, w_ktora_strone);		
 		if(pom_kontener != wezel && pom_kontener -> znak != '*' && pom_kontener-> gotowy == 1)
@@ -271,13 +271,13 @@ void wyswietl_kod()
 	while(tmp)
 	{
 		if(tmp->znak == 32)
-			printf("Znak Spacja %5s\n", tmp->kod);
+			printf("Znak Spacja %11s\n", tmp->kod);
 		else if(tmp->znak == 10)
-			printf("Znak EOL%9s\n", tmp->kod);
+			printf("Znak EOL%15s\n", tmp->kod);
 		else if(tmp->znak == 9)
-			printf("Znak TAB%9s\n", tmp->kod);
+			printf("Znak TAB%15s\n", tmp->kod);
 		else
-			printf("Znak %c %10s\n", tmp->znak, tmp->kod);
+			printf("Znak %c %16s\n", tmp->znak, tmp->kod);
 		tmp = tmp->lewa;
 	}
 	free(tmp);
@@ -361,7 +361,7 @@ void posprzataj(char *tekst, char *zakodowany_tekst)
 	free(zakodowany_tekst);
 }
 
-void zbuduj_kod(char **zakodowany_tekst, char *tekst)
+void zbuduj_kod(char *zakodowany_tekst, char *tekst)
 {
 	int i = 0;
 	
@@ -369,7 +369,7 @@ void zbuduj_kod(char **zakodowany_tekst, char *tekst)
 	{
 		 char* kod;
 		 kod = przeszukaj_kod(tekst[i]);
-		 strcat(*zakodowany_tekst,kod);
+		 strcat(zakodowany_tekst,kod);
 		 free(kod);
 		 i++;
 	}
