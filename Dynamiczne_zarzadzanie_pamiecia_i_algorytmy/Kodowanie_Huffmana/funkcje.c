@@ -166,33 +166,26 @@ void stworz_drzewo_HF()
 		}
 		else
 		{
-			node* pop_kontener = NULL;
-			node* pop_kontener2 = NULL;
+			node* pop_kontener;
+			node* pop_kontener2;
 
 			if(glowa)
 			{
 				lista* tmp = glowa;
 				glowa = tmp->next;
 				pop_kontener = tmp->lisc;
-				free(tmp);
-			}
-			if(glowa)
-			{
 				lista* tmp2 = glowa;
 				glowa = tmp2->next;
 				pop_kontener2 = tmp2->lisc;
+				free(tmp);
 				free(tmp2);
 			}
 
-			lista* polaczone_kontenery = NULL;
+			lista* polaczone_kontenery;
 			polaczone_kontenery  = malloc(sizeof(lista));
 			polaczone_kontenery -> lisc = malloc(sizeof(node));
-			polaczone_kontenery -> lisc -> znak = '*';
 			polaczone_kontenery -> lisc -> ilosc = pop_kontener -> ilosc + pop_kontener2 -> ilosc;
 			polaczone_kontenery -> lisc -> gotowy = 0;
-			polaczone_kontenery -> lisc -> kod = NULL;
-			polaczone_kontenery -> lisc -> lewa = NULL;
-			polaczone_kontenery -> lisc -> prawa = NULL;
 			    
 			if(pop_kontener -> ilosc > pop_kontener2 -> ilosc)
 			{
@@ -221,11 +214,11 @@ void kodowanieHT(node* pom_kontener, char* kodHT, int generacja, char w_ktora_st
 		pom_kontener -> kod = malloc(generacja * sizeof(char));
 		if(pom_kontener == wezel)
 			sprintf(pom_kontener->kod,"%s","");
-		else
+		if(pom_kontener != wezel)
 			sprintf(pom_kontener->kod,"%s%c",kodHT, w_ktora_strone);		
-		if(pom_kontener != wezel && pom_kontener -> znak != '*' && pom_kontener-> gotowy == 1)
+		if(pom_kontener != wezel && pom_kontener-> gotowy == 1)
 		{	
-			node* tmp = NULL;
+			node* tmp;
 			tmp = malloc(sizeof(node));
 			tmp -> ilosc = pom_kontener -> ilosc;
 			tmp -> znak = pom_kontener -> znak;
@@ -375,3 +368,8 @@ void zbuduj_kod(char *zakodowany_tekst, char *tekst)
 	}
 }
 
+void stopien_kompresji(int dlugosc, int dlugosc_kodu)
+{
+	int wynik = (dlugosc_kodu*100) / (dlugosc*8);
+	printf("%d%%\n", wynik);
+}

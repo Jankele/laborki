@@ -40,10 +40,13 @@ int main()
 	zbuduj_kod(zakodowany_tekst, tekst);
 	{
 		sformatuj_tekst("ROZMIAR TEKSTU W BITACH, PRZED ZAKODOWANIEM",43);
-		printf("%lu\n", dlugosc*sizeof(char)*8);
+		printf("%d\n", dlugosc*8);
 
 		sformatuj_tekst("ROZMIAR TEKSTU W BITACH, PO ZAKODOWANIU",39);
 		printf("%d\n", dlugosc_kodu);
+
+		sformatuj_tekst("STOPIEN KOMPRESJI",17);
+		stopien_kompresji(dlugosc, dlugosc_kodu);
 
 		sformatuj_tekst("LISTA ZNAKOW ORAZ LICZBA ICH WYSTAPIEN", 38);
 		wyswietl_powtorzenia();
