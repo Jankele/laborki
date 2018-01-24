@@ -1,6 +1,6 @@
-#include <stdlib.h> //malloc, etc.
-#include <stdio.h> //printf, etc.
-#include <string.h> //strlen, etc.
+#include <stdlib.h> //malloc, calloc, free
+#include <stdio.h> //printf, scanf
+#include <string.h> //strlen, strcat
 #include "funkcje.h"
 
 char* czytaj_plik(const char* plik)
@@ -370,6 +370,6 @@ void zbuduj_kod(char *zakodowany_tekst, char *tekst)
 
 void stopien_kompresji(int dlugosc, int dlugosc_kodu)
 {
-	int wynik = (dlugosc_kodu*100) / (dlugosc*8);
-	printf("%d%%\n", wynik);
+	float wynik = ((float)dlugosc * 8) / (float)dlugosc_kodu;
+	printf("%.2f:1\n", wynik);
 }

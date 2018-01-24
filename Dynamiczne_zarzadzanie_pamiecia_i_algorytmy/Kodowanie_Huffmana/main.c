@@ -2,13 +2,13 @@
 	01.2018
 	Jan Komorkiewicz
 --------------------------------------------------------
-+++ Czytamy z pliku podanego na starcie programu, ktory musi znajdowac sie w tym samym katologu w ktorym uruchamiamy program.
-+++ Adres glowy przekazywany jest do funkcji jako wartosc, dzieki czemu nie musze uzywac zmiennych globalnych.
++++ Czyszczenie plikow object - make clean
++++ Uruchomienie programu - make run, lub ./a.out
++++ Na starcie programu czytamy z pliku podanego w stdin
++++ W celu ulatwienia pisania kodu, wskazniki na strukture list sa globalne
 +++ Funkcja wyswietlajaca ilosc wystapien danego znaku nie zapewnia obslugi wszystkich znakow specjalnych,
 	przez co znaki tj. "vertical tab" lub niektore znaki oprocz spacji i znaku EOL moga sie wyswietlac bez opisu.
 +++ Wycieki pamieci sprawdzone valgrindem
-+++ czyszczenie plikow object - make clean
-+++ uruchomienie programu - make run
 */
 
 #include <stdlib.h> //malloc, calloc, free
@@ -23,6 +23,7 @@ int dlugosc_kodu;
 
 int main()
 {
+	
 	char plik[100];
 	char* zakodowany_tekst;
 	//wczytanie tekstu
@@ -34,13 +35,13 @@ int main()
 	zloz_liste(dlugosc, tekst);
 	sortowanie_listy();
 	stworz_drzewo_HF();
-	kodowanieHT(wezel, "", 1, LEWA_GALAZ);
+	kodowanieHT(wezel, "", 1, LEWA_GALAZ, &dlugosc_kodu);
 	sortowanie_wpisow();
 	zakodowany_tekst = calloc(dlugosc_kodu, sizeof(char));
 	zbuduj_kod(zakodowany_tekst, tekst);
-	{
+	
 		sformatuj_tekst("ROZMIAR TEKSTU W BITACH, PRZED ZAKODOWANIEM",43);
-		printf("%d\n", dlugosc*8);
+		printf("%lu\n", dlugosc*8*sizeof(char));
 
 		sformatuj_tekst("ROZMIAR TEKSTU W BITACH, PO ZAKODOWANIU",39);
 		printf("%d\n", dlugosc_kodu);
@@ -59,7 +60,7 @@ int main()
 
 		sformatuj_tekst("TRESC TEKSTU PO ZAKODOWANIU", 27);
 		printf("%s\n\n",zakodowany_tekst);
-	}
+	
 		posprzataj(tekst, zakodowany_tekst);
 
 	return 0;
