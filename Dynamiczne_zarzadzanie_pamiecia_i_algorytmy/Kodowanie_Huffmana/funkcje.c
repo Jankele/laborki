@@ -30,129 +30,140 @@ char* czytaj_plik(const char* plik)
 	return tekst;
 }
 
-
-
-void dodanie_elementu_na_poczatek_oraz_zliczanie_powtorzen(char znak)
+void stworz_glowe(char znak)
 {
-	lista* pom_kontener = NULL;
-	pom_kontener = glowa;
-	int czy_znak_wystapil = 0;
-
-	while(pom_kontener)
-	{
-		if(pom_kontener -> lisc -> znak == znak)
-		{
-			czy_znak_wystapil++;
-			pom_kontener -> lisc -> ilosc = pom_kontener -> lisc -> ilosc + 1;
-			break;
-		}
-		pom_kontener = pom_kontener -> next;
-	}
-
-	if(czy_znak_wystapil == 0)
-	{
 		lista* pom_kontener = NULL;
 	    pom_kontener  = malloc(sizeof(lista));
 	    pom_kontener -> lisc = malloc(sizeof(node));
 	    pom_kontener -> lisc -> znak = znak;
 	    pom_kontener -> lisc -> ilosc = 1;
 	    pom_kontener -> lisc -> gotowy = 1;
-	    pom_kontener -> lisc -> prawa = NULL;
-	    pom_kontener -> next = NULL; 		
-		pom_kontener -> next = glowa;
-		glowa = pom_kontener;
-	}	
+	    pom_kontener -> next = NULL;  		
+	    glowa = pom_kontener;
 }
 
-void sortowanie_listy()
-{	
-	lista *pom = NULL;
-	lista *pom_next = NULL;
-	lista *pom2 = NULL;
-	lista *pom_kontener = NULL; 
-	lista *warunek = NULL;
-
-	while(glowa->next != warunek)
+void stworz_liste_powtorzen(int dlugosc, char* tekst)
+{
+	for(int i=1;i<dlugosc;i++)
 	{
-		pom = glowa;
-		pom2 = pom;
-		pom_next = pom->next;
-		while(pom != warunek)
+		lista* pom_kontener = NULL;
+		pom_kontener = glowa;
+		int czy_znak_wystapil = 0;
+
+		while(pom_kontener)
 		{
-			if(pom->lisc->ilosc > pom_next->lisc->ilosc)
+			if(pom_kontener -> lisc -> znak == tekst[i])
 			{
-				pom_kontener = pom_next->next;
-				pom_next->next = pom;
-				pom->next = pom_kontener;
-				if(pom == glowa)
-				{
-					glowa = pom_next;
-					pom2 = pom_next;
-				}
-				else
-				{
-					pom2->next = pom_next;
-					pom2 = pom_next;
-				}
+				czy_znak_wystapil++;
+				pom_kontener -> lisc -> ilosc = pom_kontener -> lisc -> ilosc + 1;
+				break;
 			}
-			else
-			{
-				pom2 = pom;
-				pom = pom->next;
-			}
+			pom_kontener = pom_kontener -> next;
+		}
+
+		if(czy_znak_wystapil == 0)
+		{
+			lista* pom_kontener = NULL;
+		    pom_kontener  = malloc(sizeof(lista));
+		    pom_kontener -> lisc = malloc(sizeof(node));
+		    pom_kontener -> lisc -> znak = tekst[i];
+		    pom_kontener -> lisc -> ilosc = 1;
+		    pom_kontener -> lisc -> gotowy = 1;
+		    pom_kontener -> lisc -> prawa = NULL;
+		    pom_kontener -> next = NULL; 		
+			pom_kontener -> next = glowa;
+			glowa = pom_kontener;
+		}	
+	}
+}
+
+void sortowanie_listy(char a)
+{
+	if(a == '0')
+	{
+		lista *pom = NULL;
+		lista *pom_next = NULL;
+		lista *pom2 = NULL;
+		lista *pom_kontener = NULL; 
+		lista *warunek = NULL;
+
+		while(glowa->next != warunek)
+		{
+			pom = glowa;
+			pom2 = pom;
 			pom_next = pom->next;
-			if(pom_next == warunek)
-				warunek = pom;
-		}
-	}
-}
-
-
-
-void sortowanie_wpisow()
-{	
-	node *pom = NULL;
-	node *pom_next = NULL;
-	node *pom2 = NULL;
-	node *pom_kontener = NULL; 
-	node *warunek = NULL;
-
-	while(glowa_listy->lewa != warunek)
-	{
-		pom = glowa_listy;
-		pom2 = pom;
-		pom_next = pom->lewa;
-		while(pom != warunek)
-		{
-			if(pom->ilosc > pom_next->ilosc)
+			while(pom != warunek)
 			{
-				pom_kontener = pom_next->lewa;
-				pom_next->lewa = pom;
-				pom->lewa = pom_kontener;
-				if(pom == glowa_listy)
+				if(pom->lisc->ilosc > pom_next->lisc->ilosc)
 				{
-					glowa_listy = pom_next;
-					pom2 = pom_next;
+					pom_kontener = pom_next->next;
+					pom_next->next = pom;
+					pom->next = pom_kontener;
+					if(pom == glowa)
+					{
+						glowa = pom_next;
+						pom2 = pom_next;
+					}
+					else
+					{
+						pom2->next = pom_next;
+						pom2 = pom_next;
+					}
 				}
 				else
 				{
-					pom2->lewa = pom_next;
-					pom2 = pom_next;
+					pom2 = pom;
+					pom = pom->next;
 				}
+				pom_next = pom->next;
+				if(pom_next == warunek)
+					warunek = pom;
 			}
-			else
-			{
-				pom2 = pom;
-				pom = pom->lewa;
-			}
+		}
+	}
+	else
+	{
+		node *pom = NULL;
+		node *pom_next = NULL;
+		node *pom2 = NULL;
+		node *pom_kontener = NULL; 
+		node *warunek = NULL;
+
+		while(glowa_listy->lewa != warunek)
+		{
+			pom = glowa_listy;
+			pom2 = pom;
 			pom_next = pom->lewa;
-			if(pom_next == warunek)
-				warunek = pom;
+			while(pom != warunek)
+			{
+				if(pom->ilosc > pom_next->ilosc)
+				{
+					pom_kontener = pom_next->lewa;
+					pom_next->lewa = pom;
+					pom->lewa = pom_kontener;
+					if(pom == glowa_listy)
+					{
+						glowa_listy = pom_next;
+						pom2 = pom_next;
+					}
+					else
+					{
+						pom2->lewa = pom_next;
+						pom2 = pom_next;
+					}
+				}
+				else
+				{
+					pom2 = pom;
+					pom = pom->lewa;
+				}
+				pom_next = pom->lewa;
+				if(pom_next == warunek)
+					warunek = pom;
+			}
 		}
 	}
 }
-
-
 
 void stworz_drzewo_HF()
 {
@@ -202,12 +213,12 @@ void stworz_drzewo_HF()
 			polaczone_kontenery -> next = glowa;
 			glowa = polaczone_kontenery;
 
-			sortowanie_listy(glowa);
+			sortowanie_listy('0');
 		}
 	}
 }
 
-void kodowanieHT(node* pom_kontener, char* kodHT, int generacja, char w_ktora_strone)
+void kodowanieHT(node* pom_kontener, char* kodHT, int generacja, char w_ktora_strone, int *dlugosc_kodu)
 {
 	if(pom_kontener)
 	{
@@ -226,84 +237,86 @@ void kodowanieHT(node* pom_kontener, char* kodHT, int generacja, char w_ktora_st
 			sprintf(tmp->kod,"%s%c",kodHT, w_ktora_strone);
 			tmp -> lewa = glowa_listy;
 			glowa_listy = tmp;
-			dlugosc_kodu += generacja * tmp -> ilosc; 
+			*dlugosc_kodu += generacja * tmp -> ilosc; 
 		} 
 		
 		if(pom_kontener->lewa)
-			kodowanieHT(pom_kontener->lewa, pom_kontener->kod, generacja+1, LEWA_GALAZ);
+			kodowanieHT(pom_kontener->lewa, pom_kontener->kod, generacja+1, LEWA_GALAZ, dlugosc_kodu);
 		if(pom_kontener->prawa)
-			kodowanieHT(pom_kontener->prawa, pom_kontener->kod, generacja+1, PRAWA_GALAZ);
+			kodowanieHT(pom_kontener->prawa, pom_kontener->kod, generacja+1, PRAWA_GALAZ, dlugosc_kodu);
 	}
 
 }
 
-void wyswietl_powtorzenia()
+void zbuduj_kod(char *zakodowany_tekst, char *tekst)
 {
-		node *tmp = NULL;
-	tmp = glowa_listy;
-	while(tmp)
+	int i = 0;
+	while(tekst[i])
 	{
-		if(tmp->znak == 32)
-			printf("Znak Spacja %5d\n", tmp->ilosc);
-		else if(tmp->znak == 10)
-			printf("Znak EOL%9d\n", tmp->ilosc);
-		else if(tmp->znak == 9)
-			printf("Znak TAB%9d\n", tmp->ilosc);
-		else
-			printf("Znak %c %10d\n", tmp->znak, tmp->ilosc);
-		tmp = tmp->lewa;
-	}
-	free(tmp);
-	puts("");
-}
-
-void wyswietl_kod()
-{
-		node *tmp = NULL;
-	tmp = glowa_listy;
-	while(tmp)
-	{
-		if(tmp->znak == 32)
-			printf("Znak Spacja %11s\n", tmp->kod);
-		else if(tmp->znak == 10)
-			printf("Znak EOL%15s\n", tmp->kod);
-		else if(tmp->znak == 9)
-			printf("Znak TAB%15s\n", tmp->kod);
-		else
-			printf("Znak %c %16s\n", tmp->znak, tmp->kod);
-		tmp = tmp->lewa;
-	}
-	free(tmp);
-	puts("");
-}
-
-char* przeszukaj_kod(char znak)
-{
-	node* pom_kontener = NULL;
-	pom_kontener = glowa_listy;
-
-	while(pom_kontener){
-		if(pom_kontener -> znak == znak)
-		{
-			char* kod = calloc(strlen(pom_kontener->kod)+1,sizeof(char));
-			memcpy(kod,pom_kontener->kod,strlen(pom_kontener->kod));
-			return(kod);
-		}
-		pom_kontener = pom_kontener->lewa;
-	}
-	return("-");
-}
-
-void zniszcz_liste(){
-	while(glowa_listy){
 		node* pom_kontener = NULL;
 		pom_kontener = glowa_listy;
-		glowa_listy = pom_kontener->lewa;
-
-		free(pom_kontener->kod);
-		free(pom_kontener);
+		while(pom_kontener)
+		{
+			if(pom_kontener -> znak == tekst[i])
+			{
+				char* tmp = calloc(strlen(pom_kontener->kod),sizeof(char));
+				memcpy(tmp,pom_kontener->kod,strlen(pom_kontener->kod));
+			 	strcat(zakodowany_tekst,tmp);
+			 	free(tmp);
+			 	i++;
+			}
+			pom_kontener = pom_kontener->lewa;
+		}
 	}
+}
 
+void sformatuj_tekst(char *tekst, size_t dlugosc)
+{
+	puts("-------------------------------------------");
+	for(int i=0;i<dlugosc;i++)
+		printf("%c", tekst[i]);
+	puts("");
+	puts("-------------------------------------------");
+}
+
+void stopien_kompresji(int dlugosc, int dlugosc_kodu)
+{
+	float wynik = ((float)dlugosc * 8) / (float)dlugosc_kodu;
+	printf("%.2f:1\n", wynik);
+}
+
+void wyswietl(char a)
+{	
+	node *tmp = NULL;
+	tmp = glowa_listy;
+	while(tmp)
+	{
+		if(a == '0')
+		{
+			if(tmp->znak == 32)
+				printf("Znak Spacja %11d\n", tmp->ilosc);
+			else if(tmp->znak == 10)
+				printf("Znak EOL%15d\n", tmp->ilosc);
+			else if(tmp->znak == 9)
+				printf("Znak TAB%15d\n", tmp->ilosc);
+			else
+				printf("Znak %c %16d\n", tmp->znak, tmp->ilosc);
+		}
+		else
+		{
+			if(tmp->znak == 32)
+				printf("Znak Spacja %11s\n", tmp->kod);
+			else if(tmp->znak == 10)
+				printf("Znak EOL%15s\n", tmp->kod);
+			else if(tmp->znak == 9)
+				printf("Znak TAB%15s\n", tmp->kod);
+			else
+				printf("Znak %c %16s\n", tmp->znak, tmp->kod);
+		}
+		tmp = tmp->lewa;
+	}
+	free(tmp);
+	puts("");
 }
 
 void usun_drzewo_HF(node* galaz){
@@ -318,58 +331,18 @@ void usun_drzewo_HF(node* galaz){
 	}
 }
 
-void stworz_glowe(char znak)
-{
-		lista* pom_kontener = NULL;
-	    pom_kontener  = malloc(sizeof(lista));
-	    pom_kontener -> lisc = malloc(sizeof(node));
-	    pom_kontener -> lisc -> znak = znak;
-	    pom_kontener -> lisc -> ilosc = 1;
-	    pom_kontener -> lisc -> gotowy = 1;
-	    pom_kontener -> next = NULL;  		
-	    glowa = pom_kontener;
-}
-
-void zloz_liste(int dlugosc, char *tekst)
-{
-	for(int i=1;i<dlugosc;i++)
-		dodanie_elementu_na_poczatek_oraz_zliczanie_powtorzen(tekst[i]);
-}
-
-void sformatuj_tekst(char *tekst, size_t dlugosc)
-{
-	puts("-------------------------------------------");
-	for(int i=0;i<dlugosc;i++)
-		printf("%c", tekst[i]);
-	puts("");
-	puts("-------------------------------------------");
-}
-
 void posprzataj(char *tekst, char *zakodowany_tekst)
 {
-	zniszcz_liste();
+	while(glowa_listy){
+		node* pom_kontener = NULL;
+		pom_kontener = glowa_listy;
+		glowa_listy = pom_kontener->lewa;
+
+		free(pom_kontener->kod);
+		free(pom_kontener);
+	}
  	usun_drzewo_HF(wezel);
 	free(glowa);
 	free(tekst);
 	free(zakodowany_tekst);
-}
-
-void zbuduj_kod(char *zakodowany_tekst, char *tekst)
-{
-	int i = 0;
-	
-	while(tekst[i])
-	{
-		 char* kod;
-		 kod = przeszukaj_kod(tekst[i]);
-		 strcat(zakodowany_tekst,kod);
-		 free(kod);
-		 i++;
-	}
-}
-
-void stopien_kompresji(int dlugosc, int dlugosc_kodu)
-{
-	float wynik = ((float)dlugosc * 8) / (float)dlugosc_kodu;
-	printf("%.2f:1\n", wynik);
 }
