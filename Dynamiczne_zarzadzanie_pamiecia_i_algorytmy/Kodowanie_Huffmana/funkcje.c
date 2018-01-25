@@ -260,7 +260,7 @@ void sformatuj_tekst(char *tekst, size_t dlugosc)
 }
 void stopien_kompresji(int dlugosc, int dlugosc_kodu)
 {
-	float wynik = ((float)dlugosc * 8 * sizeof(char)) / (float)dlugosc_kodu;
+	float wynik = ((float)dlugosc * 8 * sizeof(char)) / (float)dlugosc_kodu; //8 bitow w 1 bajcie
 	printf("%.2f:1\n", wynik);
 }
 void wyswietl(char a)

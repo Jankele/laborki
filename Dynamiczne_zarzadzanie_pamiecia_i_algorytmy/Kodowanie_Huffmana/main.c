@@ -35,7 +35,7 @@ int main()
 	zakodowany_tekst = calloc(dlugosc_kodu, sizeof(char)); //calloc rezerwuje i wypelnia zerami, co w naszej sytuacji jest idealnym rozwiazaniem, mimo, ze mniej optymalnym
 	zbuduj_kod(zakodowany_tekst, tekst);
 		sformatuj_tekst("ROZMIAR TEKSTU W BITACH, PRZED ZAKODOWANIEM",43);
-		printf("%lu\n", dlugosc*sizeof(char)*8);
+		printf("%lu\n", dlugosc * sizeof(char) * 8); //8 bitow w 1 bajcie
 		sformatuj_tekst("ROZMIAR TEKSTU W BITACH, PO ZAKODOWANIU",39);
 		printf("%d\n", dlugosc_kodu);
 		sformatuj_tekst("STOPIEN KOMPRESJI",17);
