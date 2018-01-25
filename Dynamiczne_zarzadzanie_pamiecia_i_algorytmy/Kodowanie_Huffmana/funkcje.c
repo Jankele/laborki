@@ -28,14 +28,14 @@ char* czytaj_plik(const char* plik)
 }
 void stworz_glowe(char znak)
 {
-		lista* pom_kontener = NULL;
-	    pom_kontener = malloc(sizeof(lista));
-	    pom_kontener->lisc = malloc(sizeof(node));
-	    pom_kontener->lisc -> znak = znak;
-	    pom_kontener->lisc -> ilosc = 1;
-	    pom_kontener->lisc -> gotowy = 1;
-	    pom_kontener->next = NULL;  		
-	    glowa = pom_kontener;
+	lista* pom_kontener = NULL;
+	pom_kontener = malloc(sizeof(lista));
+	pom_kontener->lisc = malloc(sizeof(node));
+	pom_kontener->lisc -> znak = znak;
+	pom_kontener->lisc -> ilosc = 1;
+	pom_kontener->lisc -> gotowy = 1;
+	pom_kontener->next = NULL;  		
+	glowa = pom_kontener;
 }
 void stworz_liste_powtorzen(int dlugosc, char* tekst)
 {
