@@ -57,14 +57,14 @@ void stworz_liste_powtorzen(int dlugosc, char* tekst)
 		if(czy_znak_wystapil == 0)
 		{
 			lista* pom_kontener = NULL;
-		    pom_kontener = malloc(sizeof(lista));
-		    pom_kontener->lisc = malloc(sizeof(node));
-		    pom_kontener->lisc->znak = tekst[i];
-		    pom_kontener->lisc->ilosc = 1;
-		    pom_kontener->lisc->gotowy = 1;
-		    pom_kontener->lisc->lewa = NULL;
-		    pom_kontener->lisc->prawa = NULL;
-		    pom_kontener->next = NULL; 		
+			pom_kontener = malloc(sizeof(lista));
+			pom_kontener->lisc = malloc(sizeof(node));
+			pom_kontener->lisc->znak = tekst[i];
+			pom_kontener->lisc->ilosc = 1;
+			pom_kontener->lisc->gotowy = 1;
+			pom_kontener->lisc->lewa = NULL;
+			pom_kontener->lisc->prawa = NULL;
+			pom_kontener->next = NULL; 		
 			pom_kontener->next = glowa;
 			glowa = pom_kontener;
 		}	
