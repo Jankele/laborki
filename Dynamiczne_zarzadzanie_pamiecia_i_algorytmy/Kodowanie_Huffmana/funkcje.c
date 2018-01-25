@@ -205,7 +205,7 @@ void kodowanieHT(node* pom_kontener, char* kodHT, int generacja, char w_ktora_st
 {
 	if(pom_kontener)
 	{
-		pom_kontener -> kod = malloc(generacja * sizeof(char));
+		pom_kontener -> kod = calloc(generacja, sizeof(char));
 		if(pom_kontener == wezel)
 			sprintf(pom_kontener->kod,"%s","");
 		if(pom_kontener != wezel)
