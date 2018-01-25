@@ -8,19 +8,16 @@ char* czytaj_plik(const char* plik)
 	char *tekst = NULL;
 	FILE *fd;
 	size_t dlugosc;
-
 	if(fd = fopen(plik, "rb"))
 	{
 		fseek(fd, 0, SEEK_END);
 		dlugosc = ftell(fd);
 		rewind(fd);
-		if(!(tekst = malloc(sizeof(char) * dlugosc+1)))
+		if(!(tekst = malloc(sizeof(char) * dlugosc)))
 			puts("Nie mozna przypisac pamieci dla zmiennej tekst!");
 		fread(tekst, dlugosc, 1, fd);
-		// tylko funkcja fread mozna bezproblemowo i bez uzywania petli
-		// mozna skopiowac cala zawartosc pliku do tablicy razem bialymi znakami
+		// tylko funkcja fread mozna bezproblemowo i bez uzywania petli skopiowac cala zawartosc pliku do tablicy razem z bialymi znakami
 		fclose(fd);
-		tekst[dlugosc] = '\0';
 	}
 	else
 	{
@@ -29,7 +26,6 @@ char* czytaj_plik(const char* plik)
 	}
 	return tekst;
 }
-
 void stworz_glowe(char znak)
 {
 		lista* pom_kontener = NULL;
@@ -41,7 +37,6 @@ void stworz_glowe(char znak)
 	    pom_kontener -> next = NULL;  		
 	    glowa = pom_kontener;
 }
-
 void stworz_liste_powtorzen(int dlugosc, char* tekst)
 {
 	for(int i=1;i<dlugosc;i++)
@@ -49,7 +44,6 @@ void stworz_liste_powtorzen(int dlugosc, char* tekst)
 		lista* pom_kontener = NULL;
 		pom_kontener = glowa;
 		int czy_znak_wystapil = 0;
-
 		while(pom_kontener)
 		{
 			if(pom_kontener -> lisc -> znak == tekst[i])
@@ -60,7 +54,6 @@ void stworz_liste_powtorzen(int dlugosc, char* tekst)
 			}
 			pom_kontener = pom_kontener -> next;
 		}
-
 		if(czy_znak_wystapil == 0)
 		{
 			lista* pom_kontener = NULL;
@@ -76,7 +69,6 @@ void stworz_liste_powtorzen(int dlugosc, char* tekst)
 		}	
 	}
 }
-
 void sortowanie_listy(char a)
 {
 	if(a == '0')
@@ -86,7 +78,6 @@ void sortowanie_listy(char a)
 		lista *pom2 = NULL;
 		lista *pom_kontener = NULL; 
 		lista *warunek = NULL;
-
 		while(glowa->next != warunek)
 		{
 			pom = glowa;
@@ -128,7 +119,6 @@ void sortowanie_listy(char a)
 		node *pom2 = NULL;
 		node *pom_kontener = NULL; 
 		node *warunek = NULL;
-
 		while(glowa_listy->lewa != warunek)
 		{
 			pom = glowa_listy;
@@ -164,7 +154,6 @@ void sortowanie_listy(char a)
 		}
 	}
 }
-
 void stworz_drzewo_HF()
 {
 	while(glowa)
@@ -179,7 +168,6 @@ void stworz_drzewo_HF()
 		{
 			node* pop_kontener;
 			node* pop_kontener2;
-
 			if(glowa)
 			{
 				lista* tmp = glowa;
@@ -191,13 +179,11 @@ void stworz_drzewo_HF()
 				free(tmp);
 				free(tmp2);
 			}
-
 			lista* polaczone_kontenery;
 			polaczone_kontenery  = malloc(sizeof(lista));
 			polaczone_kontenery -> lisc = malloc(sizeof(node));
 			polaczone_kontenery -> lisc -> ilosc = pop_kontener -> ilosc + pop_kontener2 -> ilosc;
-			polaczone_kontenery -> lisc -> gotowy = 0;
-			    
+			polaczone_kontenery -> lisc -> gotowy = 0;			    
 			if(pop_kontener -> ilosc > pop_kontener2 -> ilosc)
 			{
 			    polaczone_kontenery -> lisc -> lewa = pop_kontener;
@@ -208,17 +194,14 @@ void stworz_drzewo_HF()
 			    polaczone_kontenery -> lisc -> lewa = pop_kontener2;
 			    polaczone_kontenery -> lisc -> prawa = pop_kontener;
 			}
-
 			polaczone_kontenery -> next = NULL;  		
 			polaczone_kontenery -> next = glowa;
 			glowa = polaczone_kontenery;
-
 			sortowanie_listy('0');
 		}
 	}
 }
-
-void kodowanieHT(node* pom_kontener, char* kodHT, int generacja, char w_ktora_strone, int *dlugosc_kodu)
+void kodowanieHT(node* pom_kontener, char* kodHT, int generacja, char w_ktora_strone)
 {
 	if(pom_kontener)
 	{
@@ -237,17 +220,14 @@ void kodowanieHT(node* pom_kontener, char* kodHT, int generacja, char w_ktora_st
 			sprintf(tmp->kod,"%s%c",kodHT, w_ktora_strone);
 			tmp -> lewa = glowa_listy;
 			glowa_listy = tmp;
-			*dlugosc_kodu += generacja * tmp -> ilosc; 
-		} 
-		
+			dlugosc_kodu += generacja * tmp -> ilosc; 
+		}
 		if(pom_kontener->lewa)
-			kodowanieHT(pom_kontener->lewa, pom_kontener->kod, generacja+1, LEWA_GALAZ, dlugosc_kodu);
+			kodowanieHT(pom_kontener->lewa, pom_kontener->kod, generacja+1, LEWA_GALAZ);
 		if(pom_kontener->prawa)
-			kodowanieHT(pom_kontener->prawa, pom_kontener->kod, generacja+1, PRAWA_GALAZ, dlugosc_kodu);
+			kodowanieHT(pom_kontener->prawa, pom_kontener->kod, generacja+1, PRAWA_GALAZ);
 	}
-
 }
-
 void zbuduj_kod(char *zakodowany_tekst, char *tekst)
 {
 	int i = 0;
@@ -269,7 +249,6 @@ void zbuduj_kod(char *zakodowany_tekst, char *tekst)
 		}
 	}
 }
-
 void sformatuj_tekst(char *tekst, size_t dlugosc)
 {
 	puts("-------------------------------------------");
@@ -278,13 +257,11 @@ void sformatuj_tekst(char *tekst, size_t dlugosc)
 	puts("");
 	puts("-------------------------------------------");
 }
-
 void stopien_kompresji(int dlugosc, int dlugosc_kodu)
 {
 	float wynik = ((float)dlugosc * 8) / (float)dlugosc_kodu;
 	printf("%.2f:1\n", wynik);
 }
-
 void wyswietl(char a)
 {	
 	node *tmp = NULL;
@@ -316,28 +293,24 @@ void wyswietl(char a)
 		tmp = tmp->lewa;
 	}
 	free(tmp);
-	puts("");
 }
-
-void usun_drzewo_HF(node* galaz){
-	
-	if(galaz){
-		
+void usun_drzewo_HF(node* galaz)
+{	
+	if(galaz)
+	{		
 		usun_drzewo_HF(galaz->lewa);
 		usun_drzewo_HF(galaz->prawa);
 		free(galaz->kod);
-		free(galaz);
-		
+		free(galaz);		
 	}
 }
-
 void posprzataj(char *tekst, char *zakodowany_tekst)
 {
-	while(glowa_listy){
+	while(glowa_listy)
+	{
 		node* pom_kontener = NULL;
 		pom_kontener = glowa_listy;
 		glowa_listy = pom_kontener->lewa;
-
 		free(pom_kontener->kod);
 		free(pom_kontener);
 	}
