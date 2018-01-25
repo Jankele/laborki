@@ -29,12 +29,12 @@ char* czytaj_plik(const char* plik)
 void stworz_glowe(char znak)
 {
 		lista* pom_kontener = NULL;
-	    pom_kontener  = malloc(sizeof(lista));
-	    pom_kontener -> lisc = malloc(sizeof(node));
-	    pom_kontener -> lisc -> znak = znak;
-	    pom_kontener -> lisc -> ilosc = 1;
-	    pom_kontener -> lisc -> gotowy = 1;
-	    pom_kontener -> next = NULL;  		
+	    pom_kontener = malloc(sizeof(lista));
+	    pom_kontener->lisc = malloc(sizeof(node));
+	    pom_kontener->lisc -> znak = znak;
+	    pom_kontener->lisc -> ilosc = 1;
+	    pom_kontener->lisc -> gotowy = 1;
+	    pom_kontener->next = NULL;  		
 	    glowa = pom_kontener;
 }
 void stworz_liste_powtorzen(int dlugosc, char* tekst)
@@ -46,31 +46,33 @@ void stworz_liste_powtorzen(int dlugosc, char* tekst)
 		int czy_znak_wystapil = 0;
 		while(pom_kontener)
 		{
-			if(pom_kontener -> lisc -> znak == tekst[i])
+			if(pom_kontener->lisc->znak == tekst[i])
 			{
 				czy_znak_wystapil++;
-				pom_kontener -> lisc -> ilosc = pom_kontener -> lisc -> ilosc + 1;
+				pom_kontener->lisc->ilosc = pom_kontener->lisc->ilosc + 1;
 				break;
 			}
-			pom_kontener = pom_kontener -> next;
+			pom_kontener = pom_kontener->next;
 		}
 		if(czy_znak_wystapil == 0)
 		{
 			lista* pom_kontener = NULL;
-		    pom_kontener  = malloc(sizeof(lista));
-		    pom_kontener -> lisc = malloc(sizeof(node));
-		    pom_kontener -> lisc -> znak = tekst[i];
-		    pom_kontener -> lisc -> ilosc = 1;
-		    pom_kontener -> lisc -> gotowy = 1;
-		    pom_kontener -> lisc -> prawa = NULL;
-		    pom_kontener -> next = NULL; 		
-			pom_kontener -> next = glowa;
+		    pom_kontener = malloc(sizeof(lista));
+		    pom_kontener->lisc = malloc(sizeof(node));
+		    pom_kontener->lisc->znak = tekst[i];
+		    pom_kontener->lisc->ilosc = 1;
+		    pom_kontener->lisc->gotowy = 1;
+		    pom_kontener->lisc->lewa = NULL;
+		    pom_kontener->lisc->prawa = NULL;
+		    pom_kontener->next = NULL; 		
+			pom_kontener->next = glowa;
 			glowa = pom_kontener;
 		}	
 	}
 }
 void sortowanie_listy(char a)
 {
+
 	if(a == '0')
 	{
 		lista *pom = NULL;
@@ -181,21 +183,21 @@ void stworz_drzewo_HF()
 			}
 			lista* polaczone_kontenery;
 			polaczone_kontenery  = malloc(sizeof(lista));
-			polaczone_kontenery -> lisc = malloc(sizeof(node));
-			polaczone_kontenery -> lisc -> ilosc = pop_kontener -> ilosc + pop_kontener2 -> ilosc;
-			polaczone_kontenery -> lisc -> gotowy = 0;			    
-			if(pop_kontener -> ilosc > pop_kontener2 -> ilosc)
+			polaczone_kontenery->lisc = malloc(sizeof(node));
+			polaczone_kontenery->lisc->ilosc = pop_kontener->ilosc + pop_kontener2->ilosc;
+			polaczone_kontenery->lisc->gotowy = 0;			    
+			if(pop_kontener->ilosc > pop_kontener2->ilosc)
 			{
-			    polaczone_kontenery -> lisc -> lewa = pop_kontener;
-			    polaczone_kontenery -> lisc -> prawa = pop_kontener2;
+			    polaczone_kontenery->lisc->lewa = pop_kontener;
+			    polaczone_kontenery->lisc->prawa = pop_kontener2;
 			}
 			else
 			{
-			    polaczone_kontenery -> lisc -> lewa = pop_kontener2;
-			    polaczone_kontenery -> lisc -> prawa = pop_kontener;
+			    polaczone_kontenery->lisc->lewa = pop_kontener2;
+			    polaczone_kontenery->lisc->prawa = pop_kontener;
 			}
-			polaczone_kontenery -> next = NULL;  		
-			polaczone_kontenery -> next = glowa;
+			polaczone_kontenery->next = NULL;  		
+			polaczone_kontenery->next = glowa;
 			glowa = polaczone_kontenery;
 			sortowanie_listy('0');
 		}
@@ -205,7 +207,7 @@ void kodowanieHT(node* pom_kontener, char* kodHT, int generacja, char w_ktora_st
 {
 	if(pom_kontener)
 	{
-		pom_kontener -> kod = calloc(generacja, sizeof(char));
+		pom_kontener->kod = calloc(generacja, sizeof(char));
 		if(pom_kontener == wezel)
 			sprintf(pom_kontener->kod,"%s","");
 		if(pom_kontener != wezel)
@@ -214,13 +216,13 @@ void kodowanieHT(node* pom_kontener, char* kodHT, int generacja, char w_ktora_st
 		{	
 			node* tmp;
 			tmp = malloc(sizeof(node));
-			tmp -> ilosc = pom_kontener -> ilosc;
-			tmp -> znak = pom_kontener -> znak;
-			tmp -> kod = malloc(generacja+1 * sizeof(char));
+			tmp->ilosc = pom_kontener->ilosc;
+			tmp->znak = pom_kontener->znak;
+			tmp->kod = malloc(generacja+1 * sizeof(char));
 			sprintf(tmp->kod,"%s%c",kodHT, w_ktora_strone);
-			tmp -> lewa = glowa_listy;
+			tmp->lewa = glowa_listy;
 			glowa_listy = tmp;
-			dlugosc_kodu += generacja * tmp -> ilosc; 
+			dlugosc_kodu += generacja * tmp->ilosc; 
 		}
 		if(pom_kontener->lewa)
 			kodowanieHT(pom_kontener->lewa, pom_kontener->kod, generacja+1, LEWA_GALAZ);
@@ -233,11 +235,10 @@ void zbuduj_kod(char *zakodowany_tekst, char *tekst)
 	int i = 0;
 	while(tekst[i])
 	{
-		node* pom_kontener = NULL;
-		pom_kontener = glowa_listy;
+		node* pom_kontener = glowa_listy;
 		while(pom_kontener)
 		{
-			if(pom_kontener -> znak == tekst[i])
+			if(pom_kontener->znak == tekst[i])
 			{
 				char* tmp = calloc(strlen(pom_kontener->kod),sizeof(char));
 				memcpy(tmp,pom_kontener->kod,strlen(pom_kontener->kod));
@@ -259,7 +260,7 @@ void sformatuj_tekst(char *tekst, size_t dlugosc)
 }
 void stopien_kompresji(int dlugosc, int dlugosc_kodu)
 {
-	float wynik = ((float)dlugosc * 8) / (float)dlugosc_kodu;
+	float wynik = ((float)dlugosc * 8 * sizeof(char)) / (float)dlugosc_kodu;
 	printf("%.2f:1\n", wynik);
 }
 void wyswietl(char a)
@@ -306,7 +307,7 @@ void usun_drzewo_HF(node* galaz)
 }
 void posprzataj(char *tekst, char *zakodowany_tekst)
 {
-	while(glowa_listy)
+	while(glowa_listy) //usun liste
 	{
 		node* pom_kontener = NULL;
 		pom_kontener = glowa_listy;

@@ -1,14 +1,14 @@
-/*	Kodowanie Huffmana v0.3
-	01.2018
+/*	Kodowanie Huffmana v1.0
+	25.01.2018
 	Jan Komorkiewicz
 --------------------------------------------------------
-+++ Czyszczenie plikow object - make clean
++++ Program wczytuje podany tekst i koduje go w ciag uporzadkowanych zer i jedynek zmniejszajac ilosc przez niego zajmowanych bitow. Program nie dekoduje kodu wynikowego.
 +++ Uruchomienie programu - make run, lub ./a.out
++++ Czyszczenie plikow object - make clean
 +++ Na starcie programu czytamy z pliku podanego w stdin
 +++ W celu ulatwienia pisania kodu, wskazniki na strukture list sa globalne
-+++ Funkcja wyswietlajaca nie zapewnia obslugi wszystkich bialych znakow, przez co moga sie one wyswietlac bez opisu.
++++ Funkcja wyswietlajaca nie zapewnia obslugi wszystkich bialych znakow, przez co moga sie one wyswietlac bez nazwy.
 +++ Wycieki pamieci usuniete przy pomocy valgrind
-+++ Program nie dekoduje kodu, tylko wyswietla go jako char*
 */
 #include <stdlib.h> //malloc, calloc, free
 #include <stdio.h> //printf, scanf
