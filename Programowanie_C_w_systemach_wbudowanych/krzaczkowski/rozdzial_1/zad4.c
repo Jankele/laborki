@@ -1,8 +1,8 @@
 /* 
-Zdefiniuj strukturę trojkat przechowującą długości boków
-trójkąta. Napisz funkcję, która otrzymuje jako argument zmienną typu
-struct trojkat, i zwraca jako wartość obwód trójkąta przekazanego
-w argumencie.
+Napisz funkcję, która otrzymuje jako argumenty zmienną troj1
+typu struct trojkat zdefiniowanego w zadaniu 7.2.1 oraz zmienną
+troj2 wskaźnik na zmienną typu struct trojkat, i przepisuje za-
+wartość zmiennej troj1 do zmiennej wskazywanej przez troj2.
 */
 #include <stdio.h>
 #include <stdlib.h>
@@ -14,17 +14,23 @@ typedef struct trojkat
 
 }trojkat;
 
-int funkcja(trojkat t)
+void funkcja(trojkat t, trojkat **t2)
 {
-	return (t.a + t.b + t.c);
+	trojkat *tmp = malloc(sizeof(trojkat));
+	tmp->a = t.a;
+	tmp->b = t.b;
+	tmp->c = t.c;
+	*t2 = tmp;
 }
 
 int main()
 {
-	trojkat t;
-	t.a = 4;
-	t.b = 5;
-	t.c = 4;
-	printf("%d\n", funkcja(t));
+	trojkat troj1;
+	trojkat *troj2;
+	troj1.a = 4;
+	troj1.b = 5;
+	troj1.c = 4;
+	funkcja(troj1, &troj2);
+	printf("%d %d %d\n", troj2->a, troj2->b, troj2->c);
 	return 0;
 }
