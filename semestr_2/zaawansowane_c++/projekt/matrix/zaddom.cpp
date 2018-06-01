@@ -1,14 +1,17 @@
+//TODO: operator ()
+
 #include <algorithm>
 #include <array>
 #include <iostream>
-#include <vector>
-#include <functional>
+#include <type_traits>
 
 template<std::size_t N, std::size_t M, typename T>
 class Matrix
 {
-    std::array<std::array<T, M>, N> _array{};
+    
+
 public:
+std::array<std::array<T, M>, N> _array{};
     Matrix()
     {
         if (N == 0)
@@ -41,42 +44,46 @@ public:
         }
     }
 
-    std::array<T, M> &operator[](const std::size_t &index)
+   /* std::array<T, M> &operator[](const std::size_t &index)
     {
         return _array.at(index);
     }
-
-    auto &operator+(const int &rhs)
+*/
+    auto operator+(const int &rhs)
     {
-        std::array<std::array<T, M>, N> array{};
+        Matrix<N,M,T> array;
+
         for (size_t n = 0; n < N; ++n)
         {
             for (size_t m = 0; m < M; ++m)
             {
-                array[n][m] = _array[n][m] + rhs;
+                array._array[n][m] = _array[n][m] + rhs;
             }
         }
         return array;
     }
 
-    auto &operator*(const int &rhs)
+    auto operator*(const int &rhs)
     {
-        std::array<std::array<T, M>, N> array{};
+        Matrix<N,M,T> array;
+
         for (size_t n = 0; n < N; ++n)
         {
             for (size_t m = 0; m < M; ++m)
             {
-                array[n][m] = _array[n][m] + rhs;
+                array._array[n][m] = _array[n][m] * rhs;
             }
         }
         return array;
 
     }
     template<std::size_t N1, std::size_t M1, typename T1>
-    auto &operator+(const Matrix<N1, M1, T1>& rhs)
+    auto operator+(Matrix<N1, M1, T1>& rhs)
     {
+            static_assert(std::is_convertible<T, T1>::value, "asdasd");
+
         Matrix<N,M,T> array;
-        if (N1 > N || M1 > M)
+        if (N1 != N || M1 != M)
         {
             throw std::range_error { "number of rows or columns error" };
         }
@@ -89,17 +96,20 @@ public:
         }
         return array;
     }
-    auto &operator*(const Matrix<N1, M1, T1> &rhs)
+
+    template<std::size_t N1, std::size_t M1, typename T1>
+    auto operator*(Matrix<N1, M1, T1>& rhs)
     {
 
+        static_assert(std::is_convertible<T, T1>::value, "asdasd");
         Matrix<N,M,T> array;
-        if (N1 > N || M1 > M)
+        if (M != N1)
         {
             throw std::range_error { "number of rows or columns error" };
         }
-        for (size_t n = 0; n < N1; ++n)
+        for (size_t n = 0; n < N; ++n)
         {
-            for (size_t m = 0; m < M1; ++m)
+            for (size_t m = 0; m < M; ++m)
             {
                 array._array[n][m] = _array[n][m] * rhs._array[n][m];
             }
@@ -121,15 +131,32 @@ public:
 ////////////////////////////////////////
 int main()
 {
-    Matrix<3, 3, int> matrix1;
-    Matrix<3, 3, int> matrix2;
-    Matrix<3,3, int> product;
+    Matrix<4, 3, int> matrix1;
+    Matrix<3, 4, int> matrix2;
+    Matrix<4 ,3, int> product;
+
+    std::cout << "pierwszy martix" << std::endl;
     matrix1.display();
-    std::cout << std::endl;
+
+    std::cout << "drugi martix" << std::endl;
     matrix2.display();
-    product = matrix1 + matrix2;
-    std::cout << std::endl;
+
+   /* product = matrix1 + matrix2;
+    std::cout << "dodawanie matrix" << std::endl;
+    product.display();*/
+
+    product = matrix1 * matrix2;
+    std::cout << "mnozenie matrix" << std::endl;
     product.display();
+
+    /*product = matrix1 + 10;
+    std::cout << "dodawanie skalar" << std::endl;
+    product.display();
+
+    product = matrix1 * 10;
+    std::cout << "mnozenie skalar" << std::endl;
+    product.display();*/
+
     return 0;
 }
 /*
