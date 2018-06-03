@@ -1,8 +1,4 @@
-#include <array>
-#include <iostream>
-#include <type_traits>
-#include <cstdlib>
-#include <ctime>
+#include "gmock/gmock.h"
 
 template<std::size_t N, std::size_t M, typename T>
 class Matrix
@@ -13,28 +9,26 @@ public:
     Matrix() //default ctor
     {
         static_assert(!(N == 0 || M == 0),"Matrix cannot have size equal to zero");
-
-        for (auto &i : _array)
-        {
-            for( auto &j : i)
-            {
-                j = std::rand() % 20;
-            }
-        }
     }
 
-    template<std::size_t N1, std::size_t M1, typename T1>
-    Matrix(const Matrix<N1, M1, T1>& other) //copy ctor
+
+    template<std::size_t N1, std::size_t matrix, typename T1>
+    Matrix(const Matrix<N1, matrix, T1>& other) //copy ctor
     {
-        static_assert(!(N1 != N || M1 != M), "Both matrixes must have the same size");
+        static_assert(!(N1 != N || matrix != M), "Both matrixes must have the same size");
 
         for (std::size_t n = 0; n < N1; ++n)
         {
-            for (std::size_t m = 0; m < M1; ++m)
+            for (std::size_t m = 0; m < matrix; ++m)
             {
                 _array[n][m] = other[n][m];
             }
         }
+    }
+
+    std::array<T, M> &operator[](std::size_t index)
+    {
+        return _array.at(index);
     }
 
     template<typename T1>
@@ -71,17 +65,17 @@ public:
         return array;
 
     }
-    template<std::size_t N1, std::size_t M1, typename T1>
-    auto operator+(Matrix<N1, M1, T1>& rhs)
+    template<std::size_t N1, std::size_t matrix, typename T1>
+    auto operator+(Matrix<N1, matrix, T1>& rhs)
     {
         static_assert(std::is_convertible<T, T1>::value, "Values are not convertible");
-        static_assert(!(N1 != N || M1 != M), "Second matrix must be the same size as first matrix");
+        static_assert(!(N1 != N || matrix != M), "Second matrix must be the same size as first matrix");
 
         Matrix<N,M,T> array;
 
         for (size_t n = 0; n < N1; ++n)
         {
-            for (size_t m = 0; m < M1; ++m)
+            for (size_t m = 0; m < matrix; ++m)
             {
                 array._array[n][m] = _array[n][m] + rhs._array[n][m];
             }
@@ -89,16 +83,16 @@ public:
         return array;
     }
 
-    template<std::size_t N1, std::size_t M1, typename T1>
-    auto operator*(Matrix<N1, M1, T1>& rhs)
+    template<std::size_t N1, std::size_t matrix, typename T1>
+    auto operator*(Matrix<N1, matrix, T1>& rhs)
     {
 
         static_assert(std::is_convertible<T, T1>::value, "Values are not convertible");
-        static_assert(!(N!=M1), "Number of rows from first matrix must be equal to number of columns from second");
+        static_assert(!(N!=matrix), "Number of rows from first matrix must be equal to number of columns from second");
 
-        Matrix<N, M1, T> array;
+        Matrix<N, matrix, T> array;
         for (std::size_t n = 0; n < N; ++n) {
-            for (std::size_t m = 0; m < M1; ++m) {
+            for (std::size_t m = 0; m < matrix; ++m) {
                 T sum = 0;
                 for (std::size_t inner = 0; inner < N1; ++inner) {
                     sum += _array[n][inner] * rhs._array[inner][m];
@@ -121,7 +115,7 @@ public:
         }
     }
 
-    template<std::size_t N1, std::size_t M1, typename T1> // zeby moc sie dostac do tablicy z rhs
+    template<std::size_t N1, std::size_t matrix, typename T1> // zeby moc sie dostac do tablicy z rhs
       friend class Matrix;
 };
 
@@ -133,41 +127,112 @@ class Matrix<N, M, bool> {
         std::cout << "Bool type is not supported!" << std::endl;
     }
 };
-////////////////////////////////////////
-int main()
-{
-    std::srand(std::time(nullptr));
-    Matrix<5,5,int> matrix1;
-    Matrix<5,5,int> matrix2;
-    Matrix<5,5,int> matrix3 = matrix1;
-    int scalar = 10;
 
-    std::cout << "pierwszy matrix" << std::endl;
-    matrix1.display();
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
+int main(int argc, char** argv) {
+    ::testing::InitGoogleTest(&argc, argv);
+    return RUN_ALL_TESTS();
+}
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// @TESTS
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    std::cout << "drugi matrix" << std::endl;
-    matrix2.display();
+TEST(Matrix, Adding_Scalar_To_Matrix){
+    Matrix<2,2,float> matrix;
+    matrix[0][0] = 2.0;
+    matrix[0][1] = 2.0;
+    matrix[1][0] = 2.0;
+    matrix[1][1] = 2.0;
 
-    std::cout << "trzeci matrix" << std::endl;
-    matrix3.display();
+    int scalar = 5;
+    auto matrix2 = matrix + scalar;
+    EXPECT_EQ(matrix2[0][0], 7);
+    EXPECT_EQ(matrix2[0][1], 7);
+    EXPECT_EQ(matrix2[1][0], 7);
+    EXPECT_EQ(matrix2[1][1], 7);
+}
 
-    std::cout << "skalar: " << scalar << std::endl;
+TEST(Matrix, Adding_Matrix_To_Matrix) {
+    Matrix<2, 2, int> matrix;
+    matrix[0][0] = 1;
+    matrix[0][1] = 1;
+    matrix[1][0] = 1;
+    matrix[1][1] = 1;
 
-    auto product = matrix1 + matrix2;
-    std::cout << "dodawanie matrix" << std::endl;
-    product.display();
+    Matrix<2, 2, float> matrix2;
+    matrix2[0][0] = 2.0;
+    matrix2[0][1] = 2.0;
+    matrix2[1][0] = 4.0;
+    matrix2[1][1] = 3.0;
 
-    auto product1 = matrix1 * matrix2;
-    std::cout << "mnozenie matrix" << std::endl;
-    product1.display();
+    auto matrix3 = matrix + matrix2;
+    EXPECT_EQ(matrix3[0][0], 3);
+    EXPECT_EQ(matrix3[0][1], 3);
+    EXPECT_EQ(matrix3[1][0], 5);
+    EXPECT_EQ(matrix3[1][1], 4);
+}
 
-    auto product2 = matrix1 + scalar;
-    std::cout << "dodawanie skalar" << std::endl;
-    product2.display();
+TEST(Matrix, Multiplying_Matrix_By_Scalar) {
+    Matrix<2, 2, int> matrix;
+    matrix[0][0] = 1;
+    matrix[0][1] = 1;
+    matrix[1][0] = 1;
+    matrix[1][1] = 1;
 
-    auto product3 = matrix1 * scalar;
-    std::cout << "mnozenie skalar" << std::endl;
-    product3.display();
+    float scalar = 5;
 
-    return 0;
+    auto matrix2 = matrix * scalar;
+    EXPECT_EQ(matrix2[0][0], 5);
+    EXPECT_EQ(matrix2[0][1], 5);
+    EXPECT_EQ(matrix2[1][0], 5);
+    EXPECT_EQ(matrix2[1][1], 5);
+}
+
+TEST(Matrix, Multiplying_Matrix_By_Matrix) {
+    Matrix<2, 3, int> matrix;
+    matrix[0][0] = 1;
+    matrix[0][1] = 5;
+    matrix[0][2] = 0;
+    matrix[1][0] = 2;
+    matrix[1][1] = -3;
+    matrix[1][2] = 1;
+
+    Matrix<3, 2, float> matrix2;
+    matrix2[0][0] = 0.0;
+    matrix2[0][1] = -2.0;
+    matrix2[1][0] = 1.0;
+    matrix2[1][1] = 1.0;
+    matrix2[2][0] = 3.0;
+    matrix2[2][1] = 4.0;
+
+    auto matrix3 = matrix * matrix2;
+    EXPECT_EQ(matrix3[0][0], 5);
+    EXPECT_EQ(matrix3[0][1], 3);
+    EXPECT_EQ(matrix3[1][0], 0);
+    EXPECT_EQ(matrix3[1][1], -3);
+
+}
+
+TEST(Matrix, Copy_Ctor) {
+    Matrix<2, 2, int> matrix;
+    matrix[0][0] = 1;
+    matrix[0][1] = 2;
+    matrix[1][0] = 3;
+    matrix[1][1] = 4;
+
+    auto matrix2 = matrix;
+
+    EXPECT_EQ(matrix2[0][0], 1);
+    EXPECT_EQ(matrix2[0][1], 2);
+    EXPECT_EQ(matrix2[1][0], 3);
+    EXPECT_EQ(matrix2[1][1], 4);
+}
+
+TEST(Matrix, Default_Ctor) {
+    Matrix<2, 2, int> matrix;
+
+    EXPECT_EQ(matrix[0][0], 0);
+    EXPECT_EQ(matrix[0][1], 0);
+    EXPECT_EQ(matrix[1][0], 0);
+    EXPECT_EQ(matrix[1][1], 0);
 }
