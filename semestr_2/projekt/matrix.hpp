@@ -1,4 +1,10 @@
+/*
+*   TODO:
+*   - testy dla wlasnych typow
+*/
 #include <array>
+#include <functional>
+#include <algorithm>
 
 template<std::size_t N, std::size_t M, typename T>
 class Matrix
@@ -24,17 +30,16 @@ public:
         const Matrix<N1, M1, T1>& other) 
     {
         static_assert(!(N1 != N || M1 != M), "Both matrices must have the same size");
-
-        for (std::size_t n=0; n<N1; ++n)
-        {
-            for (std::size_t m=0; m<M1; ++m)
-            {
-                _array[n][m] = other[n][m];
-            }
-        }
+        static_assert(std::is_convertible<T, T1>::value, "Values are not convertible");
+        _array = other;
     }
 //operator [] needed for getting index from objects _array
     std::array<T, M> &operator[](std::size_t index)
+    {
+        return _array.at(index);
+    }
+
+    const std::array<T, M> &operator[](std::size_t index) const
     {
         return _array.at(index);
     }
@@ -52,14 +57,13 @@ public:
         Matrix<N,M,T> array;
         Matrix<N,M,T1> identityMatrix;
         for (auto &i : identityMatrix._array)
-            i.fill(rhs);
-        for (std::size_t n=0; n<N; ++n)
-        {
-            for (std::size_t m=0; m<M; ++m)
+            std::fill(i.begin(),i.end(), rhs);
+//cannot use range for below because need to use same index of two different arrays
+            for (std::size_t n=0; n<N; ++n)
             {
-                array._array[n][m] = _array[n][m] + identityMatrix._array[n][m];
+//sum two values with std::transform/std::plus combo
+                std::transform(_array[n].begin(), _array[n].end(), identityMatrix._array[n].begin(), array._array[n].begin(), std::plus<T1>());
             }
-        }
         return array;
     }
 //operator * for (matrix * scalar)
@@ -69,13 +73,13 @@ public:
     {
         static_assert(std::is_convertible<T, T1>::value, "Values are not convertible");
         Matrix<N,M,T> array;
-
+        Matrix<N,M,T1> identityMatrix;
+        for (auto &i : identityMatrix._array)
+            std::fill(i.begin(),i.end(), rhs);
         for (std::size_t n=0; n<N; ++n)
         {
-            for (std::size_t m=0; m<M; ++m)
-            {
-                array._array[n][m] = _array[n][m] * rhs;
-            }
+//multiply two values with std::transform
+            std::transform(_array[n].begin(), _array[n].end(), identityMatrix._array[n].begin(), array._array[n].begin(), [](T f, T1 s){return f*s;});
         }
         return array;
 
@@ -90,13 +94,12 @@ public:
 
         Matrix<N,M,T> array;
 
-        for (std::size_t n=0; n<N1; ++n)
-        {
-            for (std::size_t m=0; m<M1; ++m)
+//cannot use range based for below because it's needed to use the same index of two different arrays
+            for (std::size_t n=0; n<N; ++n)
             {
-                array._array[n][m] = _array[n][m] + rhs._array[n][m];
+//add two values with std::transform/std::plus
+                std::transform(_array[n].begin(), _array[n].end(), rhs._array[n].begin(), array._array[n].begin(), std::plus<T1>());
             }
-        }
         return array;
     }
 //operator * for (matrix * matrix)
@@ -104,7 +107,6 @@ public:
     auto operator*(
         Matrix<N1, M1, T1>& rhs)
     {
-
         static_assert(std::is_convertible<T, T1>::value, "Values are not convertible");
         static_assert(!(N!=M1), "Number of rows from first matrix must be equal to number of columns from second");
 
