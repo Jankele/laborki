@@ -1,10 +1,28 @@
-/*
-*   TODO:
-*   - testy dla wlasnych typow
-*/
 #include <array>
 #include <functional>
 #include <algorithm>
+
+struct Complex
+{
+    int _re;
+    int _img;
+};
+
+Complex operator+(const Complex& lhs, const Complex& rhs)
+{
+    Complex tmp;
+    tmp._re = lhs._re + rhs._re;
+    tmp._img = lhs._img + rhs._img;
+    return tmp;
+}
+
+Complex operator*(const Complex& lhs, const Complex& rhs)
+{
+    Complex tmp;
+    tmp._re = lhs._re * rhs._re;
+    tmp._img = lhs._img * rhs._img;
+    return tmp;
+}
 
 template<std::size_t N, std::size_t M, typename T>
 class Matrix
@@ -125,4 +143,16 @@ public:
 //friending class so it can have access to array from rhs object
     template<std::size_t N1, std::size_t M1, typename T1>
       friend class Matrix;
+
+      void fillStruct(auto a)
+      {
+        static_assert(std::is_same <T, Complex>::value, "Matrix cannot be of type different than Complex");
+            for (std::size_t i=0;i<N;i++)
+            {
+                for(std::size_t j=0;j<M;j++)
+                {
+                    _array[i][j] = {a,a};
+                }
+            }
+        }
 };
