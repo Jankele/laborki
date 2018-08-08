@@ -1,3 +1,0 @@
-/home/user/laborki/cpp/build/CMakeFiles/edit_cache.dir
-/home/user/laborki/cpp/build/CMakeFiles/rebuild_cache.dir
-/home/user/laborki/cpp/build/CMakeFiles/hello.dir
